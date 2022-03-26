@@ -3,3 +3,4 @@ nginx
 *aws.sh
 .env*
 __pycache__
+*.img
