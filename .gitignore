@@ -2,3 +2,4 @@ test
 nginx
 *aws.sh
 .env*
+__pycache__
