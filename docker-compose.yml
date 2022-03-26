@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  zabbixagentwebhook:
+    restart: always
+    build: ./zabbix-webhook
+    image: zabbixagentwebhook:latest
+    container_name: zabbixagentwebhook
+#    command: gunicorn -w ${UNICORN_WORKERS:-1} -b 0.0.0.0:80 app:app
+    ports:
+      - 8080:80
+    env_file:
+      - ./.env.prod
+
+#  nginx:
+#    build: ./nginx
+  #    volumes:
+  #      - static_volume:/home/app/web/staticfiles
+#    ports:
+#      - 8080:80
+#    depends_on:
+#      - zabbixagentwebhook
