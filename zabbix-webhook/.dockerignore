@@ -1,0 +1,13 @@
+Dockerfile
+.vscode
+.dockerignore
+.git
+.cache
+docker-compose*
+venv/
+*.pyc
+.idea
+test*
+*.ko
+*.gzip
+*.zip
