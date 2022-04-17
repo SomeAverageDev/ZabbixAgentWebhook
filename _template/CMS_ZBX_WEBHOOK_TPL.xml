@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <zabbix_export>
     <version>5.0</version>
-    <date>2022-04-08T21:25:13Z</date>
+    <date>2022-04-17T20:44:48Z</date>
     <groups>
         <group>
             <name>Templates</name>
@@ -22,6 +22,9 @@
                 </application>
                 <application>
                     <name>Azure</name>
+                </application>
+                <application>
+                    <name>GCP</name>
                 </application>
                 <application>
                     <name>webhook</name>
@@ -55,6 +58,7 @@
                     <delay>0</delay>
                     <history>7d</history>
                     <trends>0</trends>
+                    <status>DISABLED</status>
                     <value_type>TEXT</value_type>
                     <applications>
                         <application>
@@ -110,6 +114,7 @@ return 'Message['+ data.Timestamp +']: '+ data.Subject +': '+ data.Message +' on
                     <delay>0</delay>
                     <history>7d</history>
                     <trends>0</trends>
+                    <status>DISABLED</status>
                     <value_type>TEXT</value_type>
                     <applications>
                         <application>
@@ -146,6 +151,23 @@ return 'unknown azure format:'+JSON.stringify(data)
                     </triggers>
                 </item>
                 <item>
+                    <name>Zabbix webhook json data trapper : gcp</name>
+                    <type>TRAP</type>
+                    <key>gcp</key>
+                    <delay>0</delay>
+                    <history>1h</history>
+                    <trends>0</trends>
+                    <value_type>TEXT</value_type>
+                    <applications>
+                        <application>
+                            <name>GCP</name>
+                        </application>
+                        <application>
+                            <name>webhook</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
                     <name>Zabbix webhook json data trapper : generic</name>
                     <type>TRAP</type>
                     <key>webhook</key>
@@ -178,20 +200,20 @@ return 'unknown azure format:'+JSON.stringify(data)
                     <url>{$ZBX_WHK_PROTO}://{$ZBX_WHK_HOST}:{$ZBX_WHK_PORT}/health</url>
                     <triggers>
                         <trigger>
-                            <expression>{nodata(10m)}=1</expression>
-                            <name>Zabbix webhook container health has no data since 10m</name>
+                            <expression>{nodata(15m)}=1</expression>
+                            <name>Zabbix webhook container health has no data since 15m</name>
                             <priority>WARNING</priority>
                             <manual_close>YES</manual_close>
                             <dependencies>
                                 <dependency>
-                                    <name>Zabbix webhook container health has no data since 20m</name>
-                                    <expression>{CMS_ZBX_WEBHOOK_TPL:webhook.countainer.health[{$ZBX_WHK_HOST},{$ZBX_WHK_PORT}].nodata(20m)}=1</expression>
+                                    <name>Zabbix webhook container health has no data since 30m</name>
+                                    <expression>{CMS_ZBX_WEBHOOK_TPL:webhook.countainer.health[{$ZBX_WHK_HOST},{$ZBX_WHK_PORT}].nodata(30m)}=1</expression>
                                 </dependency>
                             </dependencies>
                         </trigger>
                         <trigger>
-                            <expression>{nodata(20m)}=1</expression>
-                            <name>Zabbix webhook container health has no data since 20m</name>
+                            <expression>{nodata(30m)}=1</expression>
+                            <name>Zabbix webhook container health has no data since 30m</name>
                             <priority>HIGH</priority>
                             <manual_close>YES</manual_close>
                         </trigger>
@@ -248,6 +270,254 @@ return 'unknown azure format:'+JSON.stringify(data)
                             <path>$.TopicArn</path>
                         </lld_macro_path>
                     </lld_macro_paths>
+                </discovery_rule>
+                <discovery_rule>
+                    <name>Azure monitor alerts discovery</name>
+                    <type>DEPENDENT</type>
+                    <key>azure.alerts[discovery]</key>
+                    <delay>0</delay>
+                    <lifetime>7d</lifetime>
+                    <item_prototypes>
+                        <item_prototype>
+                            <name>Azure Alert state [{#ID}]</name>
+                            <type>DEPENDENT</type>
+                            <key>az.alert.state[{#ID}]</key>
+                            <delay>0</delay>
+                            <history>7d</history>
+                            <trends>0</trends>
+                            <value_type>TEXT</value_type>
+                            <applications>
+                                <application>
+                                    <name>Azure</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <params>$.data.essentials.monitorCondition</params>
+                                    <error_handler>DISCARD_VALUE</error_handler>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>az-mon</key>
+                            </master_item>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Azure Alert summary [{#ID}]</name>
+                            <type>DEPENDENT</type>
+                            <key>az.alert.summary[{#ID}]</key>
+                            <delay>0</delay>
+                            <history>7d</history>
+                            <trends>0</trends>
+                            <value_type>TEXT</value_type>
+                            <applications>
+                                <application>
+                                    <name>Azure</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>NOT_MATCHES_REGEX</type>
+                                    <params>&quot;monitorCondition&quot;:&quot;Resolved&quot;,</params>
+                                    <error_handler>DISCARD_VALUE</error_handler>
+                                </step>
+                                <step>
+                                    <type>JAVASCRIPT</type>
+                                    <params>var data = JSON.parse(value);
+if (data.schemaId.localeCompare('azureMonitorCommonAlertSchema') == 0) {
+  msg = 'Message['+ data.data.essentials.firedDateTime +']: '+ data.data.essentials.alertRule +': '+ data.data.essentials.severity
+  if (typeof data.data.essentials.configurationItems !== 'undefined') {
+    msg = msg + ' on topic:' + data.data.essentials.configurationItems.join(', ')
+  }
+  return msg
+}
+return 'unknown azure format:'+JSON.stringify(data)
+</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>az-mon</key>
+                            </master_item>
+                        </item_prototype>
+                    </item_prototypes>
+                    <trigger_prototypes>
+                        <trigger_prototype>
+                            <expression>{CMS_ZBX_WEBHOOK_TPL:az.alert.summary[{#ID}].str(Sev0)}=1 and&#13;
+{CMS_ZBX_WEBHOOK_TPL:az.alert.state[{#ID}].str(Resolved)}=0</expression>
+                            <recovery_mode>RECOVERY_EXPRESSION</recovery_mode>
+                            <recovery_expression>{CMS_ZBX_WEBHOOK_TPL:az.alert.state[{#ID}].str(Resolved)}=1</recovery_expression>
+                            <name>Azure alerts:{ITEM.VALUE}</name>
+                            <priority>HIGH</priority>
+                            <manual_close>YES</manual_close>
+                        </trigger_prototype>
+                        <trigger_prototype>
+                            <expression>{CMS_ZBX_WEBHOOK_TPL:az.alert.summary[{#ID}].str(Sev1)}=1 and&#13;
+{CMS_ZBX_WEBHOOK_TPL:az.alert.state[{#ID}].str(Resolved)}=0</expression>
+                            <recovery_mode>RECOVERY_EXPRESSION</recovery_mode>
+                            <recovery_expression>{CMS_ZBX_WEBHOOK_TPL:az.alert.state[{#ID}].str(Resolved)}=1</recovery_expression>
+                            <name>Azure alerts:{ITEM.VALUE}</name>
+                            <priority>AVERAGE</priority>
+                            <manual_close>YES</manual_close>
+                        </trigger_prototype>
+                        <trigger_prototype>
+                            <expression>{CMS_ZBX_WEBHOOK_TPL:az.alert.summary[{#ID}].str(Sev2)}=1 and&#13;
+{CMS_ZBX_WEBHOOK_TPL:az.alert.state[{#ID}].str(Resolved)}=0</expression>
+                            <recovery_mode>RECOVERY_EXPRESSION</recovery_mode>
+                            <recovery_expression>{CMS_ZBX_WEBHOOK_TPL:az.alert.state[{#ID}].str(Resolved)}=1</recovery_expression>
+                            <name>Azure alerts:{ITEM.VALUE}</name>
+                            <priority>WARNING</priority>
+                            <manual_close>YES</manual_close>
+                        </trigger_prototype>
+                        <trigger_prototype>
+                            <expression>{CMS_ZBX_WEBHOOK_TPL:az.alert.summary[{#ID}].str(Sev4)}=1 and&#13;
+{CMS_ZBX_WEBHOOK_TPL:az.alert.state[{#ID}].str(Resolved)}=0</expression>
+                            <recovery_mode>RECOVERY_EXPRESSION</recovery_mode>
+                            <recovery_expression>{CMS_ZBX_WEBHOOK_TPL:az.alert.state[{#ID}].str(Resolved)}=1</recovery_expression>
+                            <name>Azure alerts:{ITEM.VALUE}</name>
+                            <priority>INFO</priority>
+                            <manual_close>YES</manual_close>
+                        </trigger_prototype>
+                    </trigger_prototypes>
+                    <master_item>
+                        <key>az-mon</key>
+                    </master_item>
+                    <lld_macro_paths>
+                        <lld_macro_path>
+                            <lld_macro>{#ID}</lld_macro>
+                            <path>$.essentials.originAlertId</path>
+                        </lld_macro_path>
+                        <lld_macro_path>
+                            <lld_macro>{#RULE}</lld_macro>
+                            <path>$.essentials.alertRule</path>
+                        </lld_macro_path>
+                        <lld_macro_path>
+                            <lld_macro>{#STATE}</lld_macro>
+                            <path>$.essentials.monitorCondition</path>
+                        </lld_macro_path>
+                    </lld_macro_paths>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <params>$.data</params>
+                            <error_handler>DISCARD_VALUE</error_handler>
+                        </step>
+                        <step>
+                            <type>JAVASCRIPT</type>
+                            <params>return '['+value+']'</params>
+                        </step>
+                    </preprocessing>
+                </discovery_rule>
+                <discovery_rule>
+                    <name>GCP messages discovery</name>
+                    <type>DEPENDENT</type>
+                    <key>gcp.messages[discovery]</key>
+                    <delay>0</delay>
+                    <lifetime>7d</lifetime>
+                    <item_prototypes>
+                        <item_prototype>
+                            <name>GCP Alert state [{#ID}]</name>
+                            <type>DEPENDENT</type>
+                            <key>gcp.state[{#ID}]</key>
+                            <delay>0</delay>
+                            <history>7d</history>
+                            <trends>0</trends>
+                            <value_type>TEXT</value_type>
+                            <applications>
+                                <application>
+                                    <name>GCP</name>
+                                </application>
+                            </applications>
+                            <application_prototypes>
+                                <application_prototype>
+                                    <name>{#PROJECTID}</name>
+                                </application_prototype>
+                            </application_prototypes>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <params>$.incident.state</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>gcp</key>
+                            </master_item>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>GCP Alert summary [{#ID}]</name>
+                            <type>DEPENDENT</type>
+                            <key>gcp.summary[{#ID}]</key>
+                            <delay>0</delay>
+                            <history>7d</history>
+                            <trends>0</trends>
+                            <value_type>TEXT</value_type>
+                            <applications>
+                                <application>
+                                    <name>GCP</name>
+                                </application>
+                            </applications>
+                            <application_prototypes>
+                                <application_prototype>
+                                    <name>{#PROJECTID}</name>
+                                </application_prototype>
+                            </application_prototypes>
+                            <preprocessing>
+                                <step>
+                                    <type>NOT_MATCHES_REGEX</type>
+                                    <params>&quot;closed&quot;,</params>
+                                    <error_handler>DISCARD_VALUE</error_handler>
+                                </step>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <params>$.incident.summary</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>gcp</key>
+                            </master_item>
+                        </item_prototype>
+                    </item_prototypes>
+                    <trigger_prototypes>
+                        <trigger_prototype>
+                            <expression>{CMS_ZBX_WEBHOOK_TPL:gcp.summary[{#ID}].strlen()}&gt;0 and &#13;
+{CMS_ZBX_WEBHOOK_TPL:gcp.state[{#ID}].str(closed)}=0</expression>
+                            <recovery_mode>RECOVERY_EXPRESSION</recovery_mode>
+                            <recovery_expression>{CMS_ZBX_WEBHOOK_TPL:gcp.state[{#ID}].str(closed)}=1</recovery_expression>
+                            <name>GCP Alert:{ITEM.VALUE1}</name>
+                            <priority>AVERAGE</priority>
+                            <manual_close>YES</manual_close>
+                        </trigger_prototype>
+                    </trigger_prototypes>
+                    <master_item>
+                        <key>gcp</key>
+                    </master_item>
+                    <lld_macro_paths>
+                        <lld_macro_path>
+                            <lld_macro>{#ID}</lld_macro>
+                            <path>$.incident.incident_id</path>
+                        </lld_macro_path>
+                        <lld_macro_path>
+                            <lld_macro>{#POLICY}</lld_macro>
+                            <path>$.incident.policy_name</path>
+                        </lld_macro_path>
+                        <lld_macro_path>
+                            <lld_macro>{#PROJECTID}</lld_macro>
+                            <path>$.incident.resource.labels.project_id</path>
+                        </lld_macro_path>
+                        <lld_macro_path>
+                            <lld_macro>{#STATE}</lld_macro>
+                            <path>$.incident.state</path>
+                        </lld_macro_path>
+                        <lld_macro_path>
+                            <lld_macro>{#SUMMARY}</lld_macro>
+                            <path>$.incident.summary</path>
+                        </lld_macro_path>
+                    </lld_macro_paths>
+                    <preprocessing>
+                        <step>
+                            <type>JAVASCRIPT</type>
+                            <params>return '['+value+']'</params>
+                        </step>
+                    </preprocessing>
                 </discovery_rule>
             </discovery_rules>
             <macros>
