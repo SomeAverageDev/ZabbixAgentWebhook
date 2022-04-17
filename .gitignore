@@ -4,3 +4,7 @@ nginx
 .env*
 __pycache__
 *.img
+*.js
+*.zip
+*.old
+.idea

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <zabbix_export>
     <version>5.0</version>
-    <date>2022-03-26T18:39:31Z</date>
+    <date>2022-04-08T21:25:13Z</date>
     <groups>
         <group>
             <name>Templates</name>
@@ -104,9 +104,9 @@ return 'Message['+ data.Timestamp +']: '+ data.Subject +': '+ data.Message +' on
                     </applications>
                 </item>
                 <item>
-                    <name>azure-monitor decoded message</name>
+                    <name>azure-monitor decoded alert</name>
                     <type>DEPENDENT</type>
-                    <key>az-mon[decoded]</key>
+                    <key>az-mon[decode]</key>
                     <delay>0</delay>
                     <history>7d</history>
                     <trends>0</trends>
@@ -119,8 +119,12 @@ return 'Message['+ data.Timestamp +']: '+ data.Subject +': '+ data.Message +' on
                     <preprocessing>
                         <step>
                             <type>JAVASCRIPT</type>
-                            <params>var data = JSON.parse(value); 
-return 'Message['+ data.data.essentials.firedDateTime +']: '+ data.data.essentials.alertRule +': '+ data.data.essentials.severity+' on topic:'+ data.data.essentials.configurationItems.join(', ')</params>
+                            <params>var data = JSON.parse(value);
+if (data.schemaId.localeCompare('azureMonitorCommonAlertSchema') == 0) {
+  return 'Message['+ data.data.essentials.firedDateTime +']: '+ data.data.essentials.alertRule +': '+ data.data.essentials.severity+' on topic:'+ data.data.essentials.configurationItems.join(', ')
+}
+return 'unknown azure format:'+JSON.stringify(data)
+</params>
                         </step>
                         <step>
                             <type>DISCARD_UNCHANGED_HEARTBEAT</type>
@@ -156,7 +160,7 @@ return 'Message['+ data.data.essentials.firedDateTime +']: '+ data.data.essentia
                     </applications>
                 </item>
                 <item>
-                    <name>Zabbix webhook container health on http://{$ZBX_WHK_HOST}:{$ZBX_WHK_PORT}/health</name>
+                    <name>Zabbix webhook container health on {$ZBX_WHK_PROTO}://{$ZBX_WHK_HOST}:{$ZBX_WHK_PORT}/health</name>
                     <type>HTTP_AGENT</type>
                     <key>webhook.countainer.health[{$ZBX_WHK_HOST},{$ZBX_WHK_PORT}]</key>
                     <history>30d</history>
@@ -171,7 +175,7 @@ return 'Message['+ data.data.essentials.firedDateTime +']: '+ data.data.essentia
                         </application>
                     </applications>
                     <timeout>10s</timeout>
-                    <url>http://{$ZBX_WHK_HOST}:{$ZBX_WHK_PORT}/health</url>
+                    <url>{$ZBX_WHK_PROTO}://{$ZBX_WHK_HOST}:{$ZBX_WHK_PORT}/health</url>
                     <triggers>
                         <trigger>
                             <expression>{nodata(10m)}=1</expression>
@@ -254,6 +258,10 @@ return 'Message['+ data.data.essentials.firedDateTime +']: '+ data.data.essentia
                 <macro>
                     <macro>{$ZBX_WHK_PORT}</macro>
                     <value>80</value>
+                </macro>
+                <macro>
+                    <macro>{$ZBX_WHK_PROTO}</macro>
+                    <value>http</value>
                 </macro>
             </macros>
         </template>
