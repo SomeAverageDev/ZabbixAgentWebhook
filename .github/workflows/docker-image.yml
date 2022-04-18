@@ -28,5 +28,5 @@ jobs:
     - name: Build the Docker image
       run: |
         docker build . --tag ghcr.io/someaveragedev/zabbixagentwebhook:latest
-#        docker run ghcr.io/someaveragedev/zabbixagentwebhook:latest
+        docker run ghcr.io/someaveragedev/zabbixagentwebhook:latest
         docker push ghcr.io/someaveragedev/zabbixagentwebhook:latest
