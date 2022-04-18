@@ -20,3 +20,13 @@ services:
 #      - 8080:80
 #    depends_on:
 #      - zabbixagentwebhook
+
+
+#  traefik: # new
+#    image: traefik:v2.2
+#    ports:
+#      - 8008:80
+#      - 8081:8080
+#    volumes:
+#      - "./traefik.dev.toml:/etc/traefik/traefik.toml"
+#      - "/var/run/docker.sock:/var/run/docker.sock:ro"

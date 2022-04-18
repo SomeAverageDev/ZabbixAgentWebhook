@@ -1,7 +1,7 @@
 #########
 # BUILD #
 #########
-FROM python:3.9-alpine as base
+FROM python:3.10-alpine as base
 
 RUN mkdir /svc
 WORKDIR /svc
@@ -33,7 +33,7 @@ RUN apk add --update \
 ##########
 # MASTER #
 ##########
-FROM python:3.9-alpine
+FROM python:3.10-alpine
 
 RUN apk add --no-cache \
     jpeg-dev zlib-dev \
@@ -45,24 +45,31 @@ COPY --from=base /svc /svc
 WORKDIR /svc
 RUN pip install --no-index --find-links=/svc/wheels -r requirements.txt && \
     mkdir -p /app && \
-    addgroup flaskgroup && \
-    adduser -D flaskuser -G flaskgroup && \
-    chown -R flaskuser:flaskgroup /app
+    addgroup appgroup && \
+    adduser -D appuser -G appgroup && \
+    chown -R appuser:appgroup /app
 
 # create and set working directory
 WORKDIR /app
 
 # copy app code into container
-COPY --chown=flaskuser:flaskgroup . .
-COPY --chown=flaskuser:flaskgroup ./src/ .
+COPY --chown=appuser:appgroup entrypoint.prod.sh .
+COPY --chown=appuser:appgroup ./src/ ./
 
-USER flaskuser
+USER appuser
 
 EXPOSE 80/tcp
+
+# set env variables
+ENV PYTHONPATH "${PYTHONPATH}:/app/app"
+# Prevents Python from writing pyc files to disc
+ENV PYTHONDONTWRITEBYTECODE 1
+# Prevents Python from buffering stdout and stderr
+ENV PYTHONUNBUFFERED 1
 
 HEALTHCHECK --interval=1m --timeout=10s --retries=3 CMD curl --fail http://localhost:80/health || exit 1
 
 # run entrypoint.prod.sh
 ENTRYPOINT ["./entrypoint.prod.sh"]
-#CMD ["gunicorn", "-w 1", "-b 0.0.0.0:80", "--pythonpath", "/app", "app.wsgi:app"]
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "80"]
+#CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "80" ]
+CMD ["gunicorn", "--bind", ":80", "--workers", "1", "--threads", "8", "app.main:app", "--worker-class", "uvicorn.workers.UvicornH11Worker", "--timeout", "60"]
