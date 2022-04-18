@@ -72,4 +72,4 @@ HEALTHCHECK --interval=1m --timeout=10s --retries=3 CMD curl --fail http://local
 # run entrypoint.prod.sh
 ENTRYPOINT ["./entrypoint.prod.sh"]
 #CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "80" ]
-CMD ["gunicorn", "--bind", ":80", "--workers", "1", "--threads", "8", "app.main:app", "--worker-class", "uvicorn.workers.UvicornH11Worker", "--timeout", "60"]
+CMD ["gunicorn", "--bind", "0.0.0.0:80", "--workers", "1", "--threads", "8", "app.main:app", "--worker-class", "uvicorn.workers.UvicornH11Worker", "--timeout", "60"]
