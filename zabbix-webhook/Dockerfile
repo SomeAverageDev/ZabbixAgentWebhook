@@ -64,5 +64,5 @@ HEALTHCHECK --interval=1m --timeout=10s --retries=3 CMD curl --fail http://local
 
 # run entrypoint.prod.sh
 ENTRYPOINT ["./entrypoint.prod.sh"]
-CMD ["gunicorn", "-w 1", "-b 0.0.0.0:80", "--pythonpath", "/app", "app.wsgi:app"]
-
+#CMD ["gunicorn", "-w 1", "-b 0.0.0.0:80", "--pythonpath", "/app", "app.wsgi:app"]
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "80"]

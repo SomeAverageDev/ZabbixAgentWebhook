@@ -1,22 +1,21 @@
 """
-Goal: Manage health
+Goal: Manage health response
 @authors:
     Gaël MONDON
 """
 import time
-import json
 
-from flask import Blueprint
-try:
-    from app.config import status
-except:
-    from .app.config import status
+from fastapi import Depends, APIRouter
+from fastapi.responses import JSONResponse
 
-health_route = Blueprint('health_route', __name__)
+from app.config import status
+from app.security import get_current_username
 
 
-@health_route.route('/health', methods=['GET'])
-def query_health():
+health_route = APIRouter()
+
+
+@health_route.get('/health')
+def query_health(auth: str = Depends(get_current_username)):
     status['timestamp'] = int(time.time())
-    return '{}'.format(json.dumps(status)), 200
-
+    return JSONResponse(content=status)

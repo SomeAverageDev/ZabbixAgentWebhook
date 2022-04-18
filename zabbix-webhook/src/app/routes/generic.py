@@ -4,41 +4,48 @@ Goal: Manage Generic workloads
     Gaël MONDON
 """
 import sys
-import json
 
-from flask import request, Blueprint
+from fastapi import Depends, BackgroundTasks, Request, APIRouter, HTTPException
+
 from app.config import status, defaults
 from app.zabbix import send_data_to_zabbix_server
+from app.tools import validate_json
+from app.security import get_current_username
+
+generic_route = APIRouter()
 
 
-generic_route = Blueprint('generic_route', __name__)
-
-
-@generic_route.route('/zabbix/generic/', methods=['POST', 'PUT'])
-def zbx_generic_webhook():
+@generic_route.post("/zabbix/generic")
+async def zbx_generic_webhook(background_tasks: BackgroundTasks,
+                              request_data: Request,
+                              auth: str = Depends(get_current_username),
+                              k: str | None = defaults['generic_item'],
+                              s: str | None = defaults['zabbix_server'],
+                              h: str | None = defaults['zabbix_host']
+                              ):
     """
     Process AWS SNS messages : Subscription and Notification
         Collect POST payload from webhook and send it to Zabbix trapper item
     :return: HTTP/200+OK or HTTP/400
     """
     try:
-        print('generic:request:{}'.format(request.data))
-        js_data = json.loads(request.data)
+        json_data = await request_data.json()
+        #print('generic:data:{}'.format(json_data))
     except Exception as e:
-        print('generic:error:{}'.format(e), file=sys.stderr)
+        print('generic:get json:error:{}'.format(e), file=sys.stderr)
         status['counters']['error'] = status['counters']['error'] + 1
-        return 'bad request!', 400
+        raise HTTPException(status_code=400, detail="bad request")
 
-    try:
-        key = request.args.get('k', defaults['generic_item'])
-        server = request.args.get('s', defaults['zabbix_server'])
-        hostname = request.args.get('h', defaults['zabbix_host'])
+    if validate_json(json_data):
+        try:
+            background_tasks.add_task(send_data_to_zabbix_server, s, h, k, json_data)
+            #print('generic:send_data_to_zabbix_server:server: {}, hostname: {}, key: {}'.format(s, h, k))
+            status['counters']['generic'] = status['counters']['generic'] + 1
+        except Exception as e:
+            print('generic:send_data_to_zabbix_server:error:{}, server: {}, hostname: {}, key: {}'.format(e, s, h, k), file=sys.stderr)
+            status['counters']['error'] = status['counters']['error'] + 1
+            raise HTTPException(status_code=400, detail="bad request")
 
-        send_data_to_zabbix_server(server, hostname, key, js_data)
-        status['counters']['generic'] = status['counters']['generic'] + 1
-    except Exception as e:
-        print('generic:error:{}'.format(e), file=sys.stderr)
-        status['counters']['error'] = status['counters']['error'] + 1
-        return 'bad request!', 400
-
-    return 'OK\n'
+        return True
+    else:
+        raise HTTPException(status_code=400, detail="bad request")

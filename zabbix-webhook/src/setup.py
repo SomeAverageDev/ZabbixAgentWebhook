@@ -4,11 +4,10 @@ from setuptools import setup, find_packages
 LONG_DESCRIPTION = 'Zabbix Agent Webhook Listener can handle various JSON data sent from tier services.'
 
 DEPENDENCIES = [
-    'Flask==2.0.3',
     'py-zabbix==1.1.7',
-    'Flask-SQLAlchemy==2.5.1',
     'gunicorn==20.1.0',
     'requests>=2.24.0',
+    'fastapi>=0.75.2',
 ]
 
 EXCLUDED_PACKAGES = [

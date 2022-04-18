@@ -1,42 +1,41 @@
 """
-Goal: Main Flask application
+Goal: Main FastAPI application
 @authors:
     Gaël MONDON
 """
 try:
-    from flask import Flask
-    from routes.health import health_route
-    from routes.sitemap import sitemap_route
-    from routes.help import help_route
+    import uvicorn
+
+    from fastapi import FastAPI
     from routes.generic import generic_route
-    from routes.azure import azure_route
+    from routes.health import health_route
     from routes.gcp import gcp_route
+    from routes.azure import azure_route
     from routes.aws import aws_route
 
-except ImportError:
-    try:
-        from .routes.health import health_route
-        from .routes.sitemap import sitemap_route
-        from .routes.help import help_route
-        from .routes.generic import generic_route
-        from .routes.azure import azure_route
-        from .routes.gcp import gcp_route
-        from .routes.aws import aws_route
-    except ImportError as error:
-        import sys
-        sys.exit("Missing required package: {}".format(error))
+    from config import fast_api_config
+
+except ImportError as error:
+    import sys
+    sys.exit("Missing required package: {}".format(error))
 
 
-# The WSGI compliant web-application object
-app = Flask(__name__)
-# add routes
-app.register_blueprint(health_route)
-app.register_blueprint(help_route)
-app.register_blueprint(generic_route)
-app.register_blueprint(azure_route)
-app.register_blueprint(gcp_route)
-app.register_blueprint(aws_route)
+# The FastAPI web-application object
+app = FastAPI(title=fast_api_config['title'],
+              version=fast_api_config['version'],
+              description=fast_api_config['description'],
+              docs_url=fast_api_config['docs_url'],
+              redoc_url=fast_api_config['redoc_url'],
+              )
+
+
+# include routes
+app.include_router(health_route)
+app.include_router(generic_route)
+app.include_router(aws_route)
+app.include_router(azure_route)
+app.include_router(gcp_route)
 
 
 if __name__ == "__main__":
-    app.run()
+    uvicorn.run("main:app", headers=[("server", "zabbixwebhook")])
