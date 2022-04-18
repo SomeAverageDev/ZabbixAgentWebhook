@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <zabbix_export>
     <version>5.0</version>
-    <date>2022-04-17T20:44:48Z</date>
+    <date>2022-04-18T19:48:45Z</date>
     <groups>
         <group>
             <name>Templates</name>
@@ -44,9 +44,6 @@
                     <value_type>TEXT</value_type>
                     <applications>
                         <application>
-                            <name>AWS</name>
-                        </application>
-                        <application>
                             <name>webhook</name>
                         </application>
                     </applications>
@@ -58,7 +55,6 @@
                     <delay>0</delay>
                     <history>7d</history>
                     <trends>0</trends>
-                    <status>DISABLED</status>
                     <value_type>TEXT</value_type>
                     <applications>
                         <application>
@@ -82,7 +78,8 @@ return 'Message['+ data.Timestamp +']: '+ data.Subject +': '+ data.Message +' on
                     <triggers>
                         <trigger>
                             <expression>{strlen()}&gt;0</expression>
-                            <recovery_mode>NONE</recovery_mode>
+                            <recovery_mode>RECOVERY_EXPRESSION</recovery_mode>
+                            <recovery_expression>{nodata(1d)}=1</recovery_expression>
                             <name>AWS-SNS {ITEM.LASTVALUE}</name>
                             <priority>WARNING</priority>
                             <type>MULTIPLE</type>
@@ -100,55 +97,9 @@ return 'Message['+ data.Timestamp +']: '+ data.Subject +': '+ data.Message +' on
                     <value_type>TEXT</value_type>
                     <applications>
                         <application>
-                            <name>Azure</name>
-                        </application>
-                        <application>
                             <name>webhook</name>
                         </application>
                     </applications>
-                </item>
-                <item>
-                    <name>azure-monitor decoded alert</name>
-                    <type>DEPENDENT</type>
-                    <key>az-mon[decode]</key>
-                    <delay>0</delay>
-                    <history>7d</history>
-                    <trends>0</trends>
-                    <status>DISABLED</status>
-                    <value_type>TEXT</value_type>
-                    <applications>
-                        <application>
-                            <name>Azure</name>
-                        </application>
-                    </applications>
-                    <preprocessing>
-                        <step>
-                            <type>JAVASCRIPT</type>
-                            <params>var data = JSON.parse(value);
-if (data.schemaId.localeCompare('azureMonitorCommonAlertSchema') == 0) {
-  return 'Message['+ data.data.essentials.firedDateTime +']: '+ data.data.essentials.alertRule +': '+ data.data.essentials.severity+' on topic:'+ data.data.essentials.configurationItems.join(', ')
-}
-return 'unknown azure format:'+JSON.stringify(data)
-</params>
-                        </step>
-                        <step>
-                            <type>DISCARD_UNCHANGED_HEARTBEAT</type>
-                            <params>300</params>
-                        </step>
-                    </preprocessing>
-                    <master_item>
-                        <key>az-mon</key>
-                    </master_item>
-                    <triggers>
-                        <trigger>
-                            <expression>{strlen()}&gt;0</expression>
-                            <recovery_mode>NONE</recovery_mode>
-                            <name>AZ-MON {ITEM.LASTVALUE}</name>
-                            <priority>WARNING</priority>
-                            <type>MULTIPLE</type>
-                            <manual_close>YES</manual_close>
-                        </trigger>
-                    </triggers>
                 </item>
                 <item>
                     <name>Zabbix webhook json data trapper : gcp</name>
@@ -159,9 +110,6 @@ return 'unknown azure format:'+JSON.stringify(data)
                     <trends>0</trends>
                     <value_type>TEXT</value_type>
                     <applications>
-                        <application>
-                            <name>GCP</name>
-                        </application>
                         <application>
                             <name>webhook</name>
                         </application>
@@ -231,8 +179,9 @@ return 'unknown azure format:'+JSON.stringify(data)
                         <item_prototype>
                             <name>aws-sns message : {#ID}</name>
                             <type>DEPENDENT</type>
-                            <key>aws-sns[{#ID}]</key>
+                            <key>aws-sns.message[{#ID}]</key>
                             <delay>0</delay>
+                            <history>7d</history>
                             <trends>0</trends>
                             <value_type>TEXT</value_type>
                             <applications>
@@ -240,6 +189,12 @@ return 'unknown azure format:'+JSON.stringify(data)
                                     <name>AWS</name>
                                 </application>
                             </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <params>$.Message</params>
+                                </step>
+                            </preprocessing>
                             <master_item>
                                 <key>aws-sns</key>
                             </master_item>
@@ -253,23 +208,13 @@ return 'unknown azure format:'+JSON.stringify(data)
                             <lld_macro>{#ID}</lld_macro>
                             <path>$.MessageId</path>
                         </lld_macro_path>
-                        <lld_macro_path>
-                            <lld_macro>{#MESSAGE}</lld_macro>
-                            <path>$.Message</path>
-                        </lld_macro_path>
-                        <lld_macro_path>
-                            <lld_macro>{#SUBJECT}</lld_macro>
-                            <path>$.Subject</path>
-                        </lld_macro_path>
-                        <lld_macro_path>
-                            <lld_macro>{#TIMESTAMP}</lld_macro>
-                            <path>*.Timestamp</path>
-                        </lld_macro_path>
-                        <lld_macro_path>
-                            <lld_macro>{#TOPIC}</lld_macro>
-                            <path>$.TopicArn</path>
-                        </lld_macro_path>
                     </lld_macro_paths>
+                    <preprocessing>
+                        <step>
+                            <type>JAVASCRIPT</type>
+                            <params>return '['+value+']'</params>
+                        </step>
+                    </preprocessing>
                 </discovery_rule>
                 <discovery_rule>
                     <name>Azure monitor alerts discovery</name>
