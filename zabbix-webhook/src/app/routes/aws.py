@@ -16,7 +16,7 @@ from app.security import get_current_username
 aws_route = APIRouter()
 
 
-@aws_route.post('/zabbix/aws-sns/')
+@aws_route.post('/zabbix/aws/sns')
 async def aws_sns_message(background_tasks: BackgroundTasks,
                           request_data: Request,
                           auth: str = Depends(get_current_username),

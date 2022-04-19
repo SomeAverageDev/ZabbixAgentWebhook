@@ -18,13 +18,13 @@ RUN apk add --update \
     pkgconfig \ 
     python3-dev \
     openssl-dev \ 
-    libffi-dev \ 
-    musl-dev \
-    make \ 
-    gcc \
-    jpeg-dev zlib-dev \
-    libmagic \
-    libpq-dev \
+#    libffi-dev \ 
+#    musl-dev \
+#    make \ 
+#    gcc \
+#    jpeg-dev zlib-dev \
+#    libmagic \
+#    libpq-dev \
     && rm -rf /var/cache/apk/* \
     && pip wheel -r requirements.txt --wheel-dir=/svc/wheels
 
@@ -58,18 +58,20 @@ COPY --chown=appuser:appgroup ./src/ ./
 
 USER appuser
 
-EXPOSE 80/tcp
 
 # set env variables
+ENV ZWL_PORT 80
+
 ENV PYTHONPATH "${PYTHONPATH}:/app/app"
 # Prevents Python from writing pyc files to disc
 ENV PYTHONDONTWRITEBYTECODE 1
 # Prevents Python from buffering stdout and stderr
 ENV PYTHONUNBUFFERED 1
 
-HEALTHCHECK --interval=1m --timeout=10s --retries=3 CMD curl --fail http://localhost:80/health || exit 1
+EXPOSE 80/tcp
+
+HEALTHCHECK --interval=1m --timeout=10s --retries=3 CMD curl --fail http://localhost:${ZWL_PORT}/health || exit 1
 
 # run entrypoint.prod.sh
-ENTRYPOINT ["./entrypoint.prod.sh"]
-#CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "80" ]
-CMD ["gunicorn", "--bind", "0.0.0.0:80", "--workers", "1", "--threads", "8", "app.main:app", "--worker-class", "uvicorn.workers.UvicornH11Worker", "--timeout", "60"]
+ENTRYPOINT ["/bin/sh"]
+CMD ["-c", "gunicorn --bind ${ZWL_BIND:-0.0.0.0}:${ZWL_PORT} --workers ${ZWL_WORKERS:-1} --threads ${ZWL_THREADS:-4} app.main:app --worker-class uvicorn.workers.UvicornH11Worker --timeout 60"]

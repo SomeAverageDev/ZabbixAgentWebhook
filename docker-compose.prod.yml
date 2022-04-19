@@ -6,7 +6,6 @@ services:
     build: ./zabbix-webhook
     image: zabbixagentwebhook:latest
     container_name: zabbixagentwebhook
-#    command: gunicorn -w ${UNICORN_WORKERS:-1} -b 0.0.0.0:80 app:app
     ports:
       - 8080:80
     env_file:

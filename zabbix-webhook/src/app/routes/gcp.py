@@ -16,7 +16,7 @@ from app.security import get_current_username
 gcp_route = APIRouter()
 
 
-@gcp_route.post('/zabbix/gcp/')
+@gcp_route.post('/zabbix/gcp')
 async def zbx_google_cloud_webhook(background_tasks: BackgroundTasks,
                                    request_data: Request,
                                    auth: str = Depends(get_current_username),

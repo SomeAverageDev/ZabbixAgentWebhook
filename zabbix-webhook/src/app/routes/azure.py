@@ -17,7 +17,7 @@ from app.security import get_current_username
 azure_route = APIRouter()
 
 
-@azure_route.post('/zabbix/az-mon/')
+@azure_route.post('/zabbix/azure/common')
 async def zbx_azure_monitor_webhook(background_tasks: BackgroundTasks,
                                     request_data: Request,
                                     auth: str = Depends(get_current_username),
@@ -26,7 +26,7 @@ async def zbx_azure_monitor_webhook(background_tasks: BackgroundTasks,
                                     h: str | None = defaults['zabbix_host']
                                     ):
     """
-    Process Azure Monitor messages
+    Process Azure Monitor common messages
         Collect POST payload from webhook and send it to Zabbix trapper item
     :return: HTTP/200+OK or HTTP/400
     """
