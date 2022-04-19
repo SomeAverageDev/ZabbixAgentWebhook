@@ -15,9 +15,9 @@ RUN apk update
 RUN apk add --update \
     curl \
     python3 \ 
-    pkgconfig \ 
-    python3-dev \
-    openssl-dev \ 
+#    pkgconfig \ 
+#    python3-dev \
+#    openssl-dev \ 
 #    libffi-dev \ 
 #    musl-dev \
 #    make \ 
@@ -35,9 +35,9 @@ RUN apk add --update \
 ##########
 FROM python:3.10-alpine
 
-RUN apk add --no-cache \
-    jpeg-dev zlib-dev \
-    libmagic
+RUN apk add --no-cache
+#    jpeg-dev zlib-dev \
+#    libmagic
 
 COPY --from=base /svc /svc
 
@@ -53,7 +53,7 @@ RUN pip install --no-index --find-links=/svc/wheels -r requirements.txt && \
 WORKDIR /app
 
 # copy app code into container
-COPY --chown=appuser:appgroup entrypoint.prod.sh .
+#COPY --chown=appuser:appgroup entrypoint.prod.sh .
 COPY --chown=appuser:appgroup ./src/ ./
 
 USER appuser
