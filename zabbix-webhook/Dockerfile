@@ -67,7 +67,7 @@ ENV PYTHONDONTWRITEBYTECODE 1
 # Prevents Python from buffering stdout and stderr
 ENV PYTHONUNBUFFERED 1
 
-HEALTHCHECK --interval=1m --timeout=10s --retries=3 CMD curl --fail http://localhost:80/status || exit 1
+HEALTHCHECK --interval=1m --timeout=10s --retries=3 CMD curl --fail http://localhost:80/health || exit 1
 
 # run entrypoint.prod.sh
 ENTRYPOINT ["./entrypoint.prod.sh"]
