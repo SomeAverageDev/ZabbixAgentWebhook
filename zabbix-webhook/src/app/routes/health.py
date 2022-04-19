@@ -15,7 +15,12 @@ from app.security import get_current_username
 health_route = APIRouter()
 
 
-@health_route.get('/health')
+@health_route.get('/status')
+def query_status():
+    return True
+
+
+@health_route.get('/status/health')
 def query_health(auth: str = Depends(get_current_username)):
     status['timestamp'] = int(time.time())
     return JSONResponse(content=status)

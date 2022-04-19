@@ -38,4 +38,4 @@ app.include_router(gcp_route)
 
 
 if __name__ == "__main__":
-    uvicorn.run("main:app", headers=[("server", "zabbixwebhook")])
+    uvicorn.run("main:app", headers=[("server", "zabbix-webhook")])
