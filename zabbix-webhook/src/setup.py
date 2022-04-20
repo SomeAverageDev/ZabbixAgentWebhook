@@ -6,8 +6,9 @@ LONG_DESCRIPTION = 'Zabbix Agent Webhook Listener can handle various JSON data s
 DEPENDENCIES = [
     'py-zabbix==1.1.7',
     'gunicorn==20.1.0',
+    'uvicorn==0.17.6',
     'requests>=2.24.0',
-    'fastapi>=0.75.2',
+    'fastapi==0.75.2',
 ]
 
 EXCLUDED_PACKAGES = [

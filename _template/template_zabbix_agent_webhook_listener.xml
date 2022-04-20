@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <zabbix_export>
     <version>5.0</version>
-    <date>2022-04-18T19:48:45Z</date>
+    <date>2022-04-20T19:13:53Z</date>
     <groups>
         <group>
             <name>Templates</name>
@@ -9,8 +9,10 @@
     </groups>
     <templates>
         <template>
-            <template>CMS_ZBX_WEBHOOK_TPL</template>
-            <name>CMS_ZBX_WEBHOOK_TPL</name>
+            <template>Zabbix Agent Webhook Listener</template>
+            <name>Zabbix Agent Webhook Listener</name>
+            <description>Template associated to Zabbix Agent Webhook Listener Docker Image.&#13;
+It provides all necessary items to collect JSON payload from main CSP.</description>
             <groups>
                 <group>
                     <name>Templates</name>
@@ -27,24 +29,25 @@
                     <name>GCP</name>
                 </application>
                 <application>
-                    <name>webhook</name>
-                </application>
-                <application>
-                    <name>Zabbix</name>
+                    <name>Webhook</name>
                 </application>
             </applications>
             <items>
                 <item>
-                    <name>Zabbix webhook json data trapper : aws-sns</name>
+                    <name>webhook json data trapper : aws-sns</name>
                     <type>TRAP</type>
                     <key>aws-sns</key>
                     <delay>0</delay>
                     <history>1h</history>
                     <trends>0</trends>
                     <value_type>TEXT</value_type>
+                    <description>Trapper item to collect AWS SNS JSON payload from webhook listener</description>
                     <applications>
                         <application>
-                            <name>webhook</name>
+                            <name>AWS</name>
+                        </application>
+                        <application>
+                            <name>Webhook</name>
                         </application>
                     </applications>
                 </item>
@@ -88,64 +91,71 @@ return 'Message['+ data.Timestamp +']: '+ data.Subject +': '+ data.Message +' on
                     </triggers>
                 </item>
                 <item>
-                    <name>Zabbix webhook json data trapper : azure-monitor</name>
+                    <name>webhook json data trapper : azure-monitor</name>
                     <type>TRAP</type>
                     <key>az-mon</key>
                     <delay>0</delay>
                     <history>1h</history>
                     <trends>0</trends>
                     <value_type>TEXT</value_type>
+                    <description>Trapper item to collect Azure Monitor JSON payload from webhook listener</description>
                     <applications>
                         <application>
-                            <name>webhook</name>
+                            <name>Azure</name>
+                        </application>
+                        <application>
+                            <name>Webhook</name>
                         </application>
                     </applications>
                 </item>
                 <item>
-                    <name>Zabbix webhook json data trapper : gcp</name>
+                    <name>webhook json data trapper : gcp</name>
                     <type>TRAP</type>
                     <key>gcp</key>
                     <delay>0</delay>
                     <history>1h</history>
                     <trends>0</trends>
                     <value_type>TEXT</value_type>
+                    <description>Trapper item to collect GCP alerts JSON payload from webhook listener</description>
                     <applications>
                         <application>
-                            <name>webhook</name>
+                            <name>GCP</name>
+                        </application>
+                        <application>
+                            <name>Webhook</name>
                         </application>
                     </applications>
                 </item>
                 <item>
-                    <name>Zabbix webhook json data trapper : generic</name>
+                    <name>webhook json data trapper : generic</name>
                     <type>TRAP</type>
                     <key>webhook</key>
                     <delay>0</delay>
                     <history>1h</history>
                     <trends>0</trends>
                     <value_type>TEXT</value_type>
+                    <description>Trapper item to collect generic JSON payload from webhook listener</description>
                     <applications>
                         <application>
-                            <name>webhook</name>
+                            <name>Webhook</name>
                         </application>
                     </applications>
                 </item>
                 <item>
-                    <name>Zabbix webhook container health on {$ZBX_WHK_PROTO}://{$ZBX_WHK_HOST}:{$ZBX_WHK_PORT}/health</name>
+                    <name>webhook container health collection</name>
                     <type>HTTP_AGENT</type>
-                    <key>webhook.countainer.health[{$ZBX_WHK_HOST},{$ZBX_WHK_PORT}]</key>
-                    <history>30d</history>
+                    <key>webhook.countainer.health[{$ZBX_WHL_HOST},{$ZBX_WHL_PORT}]</key>
+                    <history>7d</history>
                     <trends>0</trends>
                     <value_type>TEXT</value_type>
+                    <description>Collects health status of Zabbix Agent Webhook Listener service</description>
                     <applications>
                         <application>
-                            <name>webhook</name>
-                        </application>
-                        <application>
-                            <name>Zabbix</name>
+                            <name>Webhook</name>
                         </application>
                     </applications>
                     <timeout>10s</timeout>
-                    <url>{$ZBX_WHK_PROTO}://{$ZBX_WHK_HOST}:{$ZBX_WHK_PORT}/health</url>
+                    <url>{$ZBX_WHL_PROTO}://{$ZBX_WHL_HOST}:{$ZBX_WHL_PORT}/health</url>
                     <triggers>
                         <trigger>
                             <expression>{nodata(15m)}=1</expression>
@@ -155,7 +165,7 @@ return 'Message['+ data.Timestamp +']: '+ data.Subject +': '+ data.Message +' on
                             <dependencies>
                                 <dependency>
                                     <name>Zabbix webhook container health has no data since 30m</name>
-                                    <expression>{CMS_ZBX_WEBHOOK_TPL:webhook.countainer.health[{$ZBX_WHK_HOST},{$ZBX_WHK_PORT}].nodata(30m)}=1</expression>
+                                    <expression>{Zabbix Agent Webhook Listener:webhook.countainer.health[{$ZBX_WHL_HOST},{$ZBX_WHL_PORT}].nodata(30m)}=1</expression>
                                 </dependency>
                             </dependencies>
                         </trigger>
@@ -166,6 +176,256 @@ return 'Message['+ data.Timestamp +']: '+ data.Subject +': '+ data.Message +' on
                             <manual_close>YES</manual_close>
                         </trigger>
                     </triggers>
+                </item>
+                <item>
+                    <name>webhook stats counter AWS-SNS</name>
+                    <type>DEPENDENT</type>
+                    <key>webhook.countainer.stats.aws-sns</key>
+                    <delay>0</delay>
+                    <history>30d</history>
+                    <description>Number of payloads received from AWS-SNS</description>
+                    <applications>
+                        <application>
+                            <name>AWS</name>
+                        </application>
+                        <application>
+                            <name>Webhook</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <params>$.counters.aws-sns</params>
+                            <error_handler>DISCARD_VALUE</error_handler>
+                        </step>
+                        <step>
+                            <type>DISCARD_UNCHANGED_HEARTBEAT</type>
+                            <params>300</params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>webhook.countainer.stats[{$ZBX_WHL_HOST},{$ZBX_WHL_PORT}]</key>
+                    </master_item>
+                </item>
+                <item>
+                    <name>webhook stats counter Azure</name>
+                    <type>DEPENDENT</type>
+                    <key>webhook.countainer.stats.azure</key>
+                    <delay>0</delay>
+                    <history>30d</history>
+                    <description>Number of payloads received from Azure</description>
+                    <applications>
+                        <application>
+                            <name>Azure</name>
+                        </application>
+                        <application>
+                            <name>Webhook</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <params>$.counters.az-mon</params>
+                            <error_handler>DISCARD_VALUE</error_handler>
+                        </step>
+                        <step>
+                            <type>DISCARD_UNCHANGED_HEARTBEAT</type>
+                            <params>300</params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>webhook.countainer.stats[{$ZBX_WHL_HOST},{$ZBX_WHL_PORT}]</key>
+                    </master_item>
+                </item>
+                <item>
+                    <name>webhook stats errors count</name>
+                    <type>DEPENDENT</type>
+                    <key>webhook.countainer.stats.errors</key>
+                    <delay>0</delay>
+                    <history>30d</history>
+                    <description>Number of errors detected</description>
+                    <applications>
+                        <application>
+                            <name>Webhook</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <params>$.counters.error</params>
+                            <error_handler>DISCARD_VALUE</error_handler>
+                        </step>
+                        <step>
+                            <type>DISCARD_UNCHANGED_HEARTBEAT</type>
+                            <params>300</params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>webhook.countainer.stats[{$ZBX_WHL_HOST},{$ZBX_WHL_PORT}]</key>
+                    </master_item>
+                </item>
+                <item>
+                    <name>webhook stats counter GCP</name>
+                    <type>DEPENDENT</type>
+                    <key>webhook.countainer.stats.gcp</key>
+                    <delay>0</delay>
+                    <history>30d</history>
+                    <description>Number of payloads received from GCP</description>
+                    <applications>
+                        <application>
+                            <name>GCP</name>
+                        </application>
+                        <application>
+                            <name>Webhook</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <params>$.counters.gcp</params>
+                            <error_handler>DISCARD_VALUE</error_handler>
+                        </step>
+                        <step>
+                            <type>DISCARD_UNCHANGED_HEARTBEAT</type>
+                            <params>300</params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>webhook.countainer.stats[{$ZBX_WHL_HOST},{$ZBX_WHL_PORT}]</key>
+                    </master_item>
+                </item>
+                <item>
+                    <name>webhook stats counter Generic</name>
+                    <type>DEPENDENT</type>
+                    <key>webhook.countainer.stats.generic</key>
+                    <delay>0</delay>
+                    <history>30d</history>
+                    <description>Number of payloads received from generic</description>
+                    <applications>
+                        <application>
+                            <name>Webhook</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <params>$.counters.generic</params>
+                            <error_handler>DISCARD_VALUE</error_handler>
+                        </step>
+                        <step>
+                            <type>DISCARD_UNCHANGED_HEARTBEAT</type>
+                            <params>300</params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>webhook.countainer.stats[{$ZBX_WHL_HOST},{$ZBX_WHL_PORT}]</key>
+                    </master_item>
+                </item>
+                <item>
+                    <name>webhook stats error messages</name>
+                    <type>DEPENDENT</type>
+                    <key>webhook.countainer.stats.messages</key>
+                    <delay>0</delay>
+                    <history>30d</history>
+                    <trends>0</trends>
+                    <value_type>TEXT</value_type>
+                    <description>Error messages collected</description>
+                    <applications>
+                        <application>
+                            <name>Webhook</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <params>$.messages</params>
+                            <error_handler>DISCARD_VALUE</error_handler>
+                        </step>
+                        <step>
+                            <type>DISCARD_UNCHANGED_HEARTBEAT</type>
+                            <params>300</params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>webhook.countainer.stats[{$ZBX_WHL_HOST},{$ZBX_WHL_PORT}]</key>
+                    </master_item>
+                </item>
+                <item>
+                    <name>webhook stats startup time</name>
+                    <type>DEPENDENT</type>
+                    <key>webhook.countainer.stats.started</key>
+                    <delay>0</delay>
+                    <history>30d</history>
+                    <units>unixtime</units>
+                    <description>Zabbix Agent Webhook Listener Docker container startup time</description>
+                    <applications>
+                        <application>
+                            <name>Webhook</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <params>$.started</params>
+                        </step>
+                        <step>
+                            <type>DISCARD_UNCHANGED_HEARTBEAT</type>
+                            <params>900</params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>webhook.countainer.stats[{$ZBX_WHL_HOST},{$ZBX_WHL_PORT}]</key>
+                    </master_item>
+                </item>
+                <item>
+                    <name>webhook stats status</name>
+                    <type>DEPENDENT</type>
+                    <key>webhook.countainer.stats.status</key>
+                    <delay>0</delay>
+                    <history>30d</history>
+                    <description>Zabbix Agent Webhook Listener Docker container status</description>
+                    <applications>
+                        <application>
+                            <name>Webhook</name>
+                        </application>
+                    </applications>
+                    <valuemap>
+                        <name>Service state</name>
+                    </valuemap>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <params>$.status</params>
+                            <error_handler>DISCARD_VALUE</error_handler>
+                        </step>
+                        <step>
+                            <type>DISCARD_UNCHANGED_HEARTBEAT</type>
+                            <params>300</params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>webhook.countainer.stats[{$ZBX_WHL_HOST},{$ZBX_WHL_PORT}]</key>
+                    </master_item>
+                </item>
+                <item>
+                    <name>webhook container stats collection</name>
+                    <type>HTTP_AGENT</type>
+                    <key>webhook.countainer.stats[{$ZBX_WHL_HOST},{$ZBX_WHL_PORT}]</key>
+                    <delay>5m</delay>
+                    <history>7d</history>
+                    <trends>0</trends>
+                    <value_type>TEXT</value_type>
+                    <authtype>BASIC</authtype>
+                    <username>{$ZBX_WHL_USER}</username>
+                    <password>{$ZBX_WHL_PWD}</password>
+                    <description>Collects statistics of Zabbix Agent Webhook Listener service</description>
+                    <applications>
+                        <application>
+                            <name>Webhook</name>
+                        </application>
+                    </applications>
+                    <timeout>10s</timeout>
+                    <url>{$ZBX_WHL_PROTO}://{$ZBX_WHL_HOST}:{$ZBX_WHL_PORT}/health/stats</url>
                 </item>
             </items>
             <discovery_rules>
@@ -224,7 +484,7 @@ return 'Message['+ data.Timestamp +']: '+ data.Subject +': '+ data.Message +' on
                     <lifetime>7d</lifetime>
                     <item_prototypes>
                         <item_prototype>
-                            <name>Azure Alert state [{#ID}]</name>
+                            <name>Azure alert state [{#ID}]</name>
                             <type>DEPENDENT</type>
                             <key>az.alert.state[{#ID}]</key>
                             <delay>0</delay>
@@ -248,7 +508,7 @@ return 'Message['+ data.Timestamp +']: '+ data.Subject +': '+ data.Message +' on
                             </master_item>
                         </item_prototype>
                         <item_prototype>
-                            <name>Azure Alert summary [{#ID}]</name>
+                            <name>Azure alert summary [{#ID}]</name>
                             <type>DEPENDENT</type>
                             <key>az.alert.summary[{#ID}]</key>
                             <delay>0</delay>
@@ -287,37 +547,37 @@ return 'unknown azure format:'+JSON.stringify(data)
                     </item_prototypes>
                     <trigger_prototypes>
                         <trigger_prototype>
-                            <expression>{CMS_ZBX_WEBHOOK_TPL:az.alert.summary[{#ID}].str(Sev0)}=1 and&#13;
-{CMS_ZBX_WEBHOOK_TPL:az.alert.state[{#ID}].str(Resolved)}=0</expression>
+                            <expression>{Zabbix Agent Webhook Listener:az.alert.summary[{#ID}].str(Sev0)}=1 and&#13;
+{Zabbix Agent Webhook Listener:az.alert.state[{#ID}].str(Resolved)}=0</expression>
                             <recovery_mode>RECOVERY_EXPRESSION</recovery_mode>
-                            <recovery_expression>{CMS_ZBX_WEBHOOK_TPL:az.alert.state[{#ID}].str(Resolved)}=1</recovery_expression>
+                            <recovery_expression>{Zabbix Agent Webhook Listener:az.alert.state[{#ID}].str(Resolved)}=1</recovery_expression>
                             <name>Azure alerts:{ITEM.VALUE}</name>
                             <priority>HIGH</priority>
                             <manual_close>YES</manual_close>
                         </trigger_prototype>
                         <trigger_prototype>
-                            <expression>{CMS_ZBX_WEBHOOK_TPL:az.alert.summary[{#ID}].str(Sev1)}=1 and&#13;
-{CMS_ZBX_WEBHOOK_TPL:az.alert.state[{#ID}].str(Resolved)}=0</expression>
+                            <expression>{Zabbix Agent Webhook Listener:az.alert.summary[{#ID}].str(Sev1)}=1 and&#13;
+{Zabbix Agent Webhook Listener:az.alert.state[{#ID}].str(Resolved)}=0</expression>
                             <recovery_mode>RECOVERY_EXPRESSION</recovery_mode>
-                            <recovery_expression>{CMS_ZBX_WEBHOOK_TPL:az.alert.state[{#ID}].str(Resolved)}=1</recovery_expression>
+                            <recovery_expression>{Zabbix Agent Webhook Listener:az.alert.state[{#ID}].str(Resolved)}=1</recovery_expression>
                             <name>Azure alerts:{ITEM.VALUE}</name>
                             <priority>AVERAGE</priority>
                             <manual_close>YES</manual_close>
                         </trigger_prototype>
                         <trigger_prototype>
-                            <expression>{CMS_ZBX_WEBHOOK_TPL:az.alert.summary[{#ID}].str(Sev2)}=1 and&#13;
-{CMS_ZBX_WEBHOOK_TPL:az.alert.state[{#ID}].str(Resolved)}=0</expression>
+                            <expression>{Zabbix Agent Webhook Listener:az.alert.summary[{#ID}].str(Sev2)}=1 and&#13;
+{Zabbix Agent Webhook Listener:az.alert.state[{#ID}].str(Resolved)}=0</expression>
                             <recovery_mode>RECOVERY_EXPRESSION</recovery_mode>
-                            <recovery_expression>{CMS_ZBX_WEBHOOK_TPL:az.alert.state[{#ID}].str(Resolved)}=1</recovery_expression>
+                            <recovery_expression>{Zabbix Agent Webhook Listener:az.alert.state[{#ID}].str(Resolved)}=1</recovery_expression>
                             <name>Azure alerts:{ITEM.VALUE}</name>
                             <priority>WARNING</priority>
                             <manual_close>YES</manual_close>
                         </trigger_prototype>
                         <trigger_prototype>
-                            <expression>{CMS_ZBX_WEBHOOK_TPL:az.alert.summary[{#ID}].str(Sev4)}=1 and&#13;
-{CMS_ZBX_WEBHOOK_TPL:az.alert.state[{#ID}].str(Resolved)}=0</expression>
+                            <expression>{Zabbix Agent Webhook Listener:az.alert.summary[{#ID}].str(Sev4)}=1 and&#13;
+{Zabbix Agent Webhook Listener:az.alert.state[{#ID}].str(Resolved)}=0</expression>
                             <recovery_mode>RECOVERY_EXPRESSION</recovery_mode>
-                            <recovery_expression>{CMS_ZBX_WEBHOOK_TPL:az.alert.state[{#ID}].str(Resolved)}=1</recovery_expression>
+                            <recovery_expression>{Zabbix Agent Webhook Listener:az.alert.state[{#ID}].str(Resolved)}=1</recovery_expression>
                             <name>Azure alerts:{ITEM.VALUE}</name>
                             <priority>INFO</priority>
                             <manual_close>YES</manual_close>
@@ -353,14 +613,14 @@ return 'unknown azure format:'+JSON.stringify(data)
                     </preprocessing>
                 </discovery_rule>
                 <discovery_rule>
-                    <name>GCP messages discovery</name>
+                    <name>GCP alert discovery</name>
                     <type>DEPENDENT</type>
-                    <key>gcp.messages[discovery]</key>
+                    <key>gcp.alerts[discovery]</key>
                     <delay>0</delay>
                     <lifetime>7d</lifetime>
                     <item_prototypes>
                         <item_prototype>
-                            <name>GCP Alert state [{#ID}]</name>
+                            <name>GCP alert state [{#ID}]</name>
                             <type>DEPENDENT</type>
                             <key>gcp.state[{#ID}]</key>
                             <delay>0</delay>
@@ -388,7 +648,7 @@ return 'unknown azure format:'+JSON.stringify(data)
                             </master_item>
                         </item_prototype>
                         <item_prototype>
-                            <name>GCP Alert summary [{#ID}]</name>
+                            <name>GCP alert summary [{#ID}]</name>
                             <type>DEPENDENT</type>
                             <key>gcp.summary[{#ID}]</key>
                             <delay>0</delay>
@@ -423,10 +683,10 @@ return 'unknown azure format:'+JSON.stringify(data)
                     </item_prototypes>
                     <trigger_prototypes>
                         <trigger_prototype>
-                            <expression>{CMS_ZBX_WEBHOOK_TPL:gcp.summary[{#ID}].strlen()}&gt;0 and &#13;
-{CMS_ZBX_WEBHOOK_TPL:gcp.state[{#ID}].str(closed)}=0</expression>
+                            <expression>{Zabbix Agent Webhook Listener:gcp.summary[{#ID}].strlen()}&gt;0 and &#13;
+{Zabbix Agent Webhook Listener:gcp.state[{#ID}].str(closed)}=0</expression>
                             <recovery_mode>RECOVERY_EXPRESSION</recovery_mode>
-                            <recovery_expression>{CMS_ZBX_WEBHOOK_TPL:gcp.state[{#ID}].str(closed)}=1</recovery_expression>
+                            <recovery_expression>{Zabbix Agent Webhook Listener:gcp.state[{#ID}].str(closed)}=1</recovery_expression>
                             <name>GCP Alert:{ITEM.VALUE1}</name>
                             <priority>AVERAGE</priority>
                             <manual_close>YES</manual_close>
@@ -467,18 +727,49 @@ return 'unknown azure format:'+JSON.stringify(data)
             </discovery_rules>
             <macros>
                 <macro>
-                    <macro>{$ZBX_WHK_HOST}</macro>
+                    <macro>{$ZBX_WHL_HOST}</macro>
                     <value>localhost</value>
                 </macro>
                 <macro>
-                    <macro>{$ZBX_WHK_PORT}</macro>
+                    <macro>{$ZBX_WHL_PORT}</macro>
                     <value>80</value>
                 </macro>
                 <macro>
-                    <macro>{$ZBX_WHK_PROTO}</macro>
+                    <macro>{$ZBX_WHL_PROTO}</macro>
                     <value>http</value>
+                </macro>
+                <macro>
+                    <macro>{$ZBX_WHL_PWD}</macro>
+                    <value>password</value>
+                </macro>
+                <macro>
+                    <macro>{$ZBX_WHL_USER}</macro>
+                    <value>user</value>
                 </macro>
             </macros>
         </template>
     </templates>
+    <triggers>
+        <trigger>
+            <expression>{Zabbix Agent Webhook Listener:webhook.countainer.stats.messages.strlen()}&gt;2 and {Zabbix Agent Webhook Listener:webhook.countainer.stats.errors.last()}&gt;0</expression>
+            <name>Zabbix webhook container has errors : {ITEM.VALUE}</name>
+            <priority>WARNING</priority>
+            <manual_close>YES</manual_close>
+        </trigger>
+    </triggers>
+    <value_maps>
+        <value_map>
+            <name>Service state</name>
+            <mappings>
+                <mapping>
+                    <value>0</value>
+                    <newvalue>Down</newvalue>
+                </mapping>
+                <mapping>
+                    <value>1</value>
+                    <newvalue>Up</newvalue>
+                </mapping>
+            </mappings>
+        </value_map>
+    </value_maps>
 </zabbix_export>

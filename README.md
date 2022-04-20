@@ -46,8 +46,8 @@ You will be able to collect JSON payloads from CSP services below:
 * **ZWL_THREADS** : Gunicorn threads number, default : '4'
 
 ### APPLICATION ENVIRONMENT VARIABLES
-* **ZWL_USERNAME** : Username for authentication, default : 'user'
-* **ZWL_PASSWORD** : Password for authentication, default : 'password'
+* **ZWL_USERNAME** : Username for Zabbix Agent Webhook Listener authentication, default : 'user'
+* **ZWL_PASSWORD** : Password for Zabbix Agent Webhook Listener authentication, default : 'password'
 * **ZWL_ZABBIX_SERVER** : Zabbix Server destination **IP address** or FQDN, default : '127.0.0.1'
 * **ZWL_ZABBIX_HOST** : Name of the host collecting data, **it must be linked to Zabbix template**, default : 'Zabbix server'
 * **ZWL_GENERIC_ITEM** : Name of the Zabbix item to collect generic payload, default : 'webhook'
