@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <zabbix_export>
     <version>5.0</version>
-    <date>2022-04-20T20:41:44Z</date>
+    <date>2022-04-20T21:17:19Z</date>
     <groups>
         <group>
             <name>Templates</name>
@@ -405,10 +405,9 @@ It provides all necessary items to collect JSON payload from main CSP.</descript
                     <type>DEPENDENT</type>
                     <key>aws-sns[discovery]</key>
                     <delay>0</delay>
-                    <status>DISABLED</status>
                     <item_prototypes>
                         <item_prototype>
-                            <name>aws-sns message : {#ID}</name>
+                            <name>aws-sns message : {#ID} on topic {#TOPIC}</name>
                             <type>DEPENDENT</type>
                             <key>aws-sns.message[{#ID}]</key>
                             <delay>0</delay>
@@ -422,13 +421,25 @@ It provides all necessary items to collect JSON payload from main CSP.</descript
                             </applications>
                             <preprocessing>
                                 <step>
-                                    <type>JSONPATH</type>
-                                    <params>$.Message</params>
+                                    <type>JAVASCRIPT</type>
+                                    <params>var data = JSON.parse(value); 
+message = JSON.parse(data.Message)
+return 'Message['+ data.Timestamp +']: '+ message.AlarmName +': ' + message.NewStateReason +' on topic:'+ data.TopicArn</params>
                                 </step>
                             </preprocessing>
                             <master_item>
                                 <key>aws-sns</key>
                             </master_item>
+                            <trigger_prototypes>
+                                <trigger_prototype>
+                                    <expression>{strlen()}&gt;0</expression>
+                                    <recovery_mode>NONE</recovery_mode>
+                                    <name>AWS-SNS Alert:{ITEM.VALUE1} on topic {#TOPIC}</name>
+                                    <priority>WARNING</priority>
+                                    <type>MULTIPLE</type>
+                                    <manual_close>YES</manual_close>
+                                </trigger_prototype>
+                            </trigger_prototypes>
                         </item_prototype>
                     </item_prototypes>
                     <master_item>
@@ -438,6 +449,10 @@ It provides all necessary items to collect JSON payload from main CSP.</descript
                         <lld_macro_path>
                             <lld_macro>{#ID}</lld_macro>
                             <path>$.MessageId</path>
+                        </lld_macro_path>
+                        <lld_macro_path>
+                            <lld_macro>{#TOPIC}</lld_macro>
+                            <path>$.TopicArn</path>
                         </lld_macro_path>
                     </lld_macro_paths>
                     <preprocessing>
