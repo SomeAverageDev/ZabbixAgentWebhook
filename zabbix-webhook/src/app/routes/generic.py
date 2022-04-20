@@ -28,6 +28,7 @@ async def zbx_generic_webhook(background_tasks: BackgroundTasks,
         Collect POST payload from webhook and send it to Zabbix trapper item
     :return: HTTP/200+OK or HTTP/400
     """
+    status['counters']['generic']['received'] = status['counters']['generic']['received'] + 1
     try:
         json_data = await request_data.json()
         #print('generic:data:{}'.format(json_data))
@@ -40,10 +41,10 @@ async def zbx_generic_webhook(background_tasks: BackgroundTasks,
         try:
             background_tasks.add_task(send_data_to_zabbix_server, s, h, k, json_data)
             #print('generic:send_data_to_zabbix_server:server: {}, hostname: {}, key: {}'.format(s, h, k))
-            status['counters']['generic'] = status['counters']['generic'] + 1
         except Exception as e:
             print('generic:send_data_to_zabbix_server:error:{}, server: {}, hostname: {}, key: {}'.format(e, s, h, k), file=sys.stderr)
             status['counters']['error'] = status['counters']['error'] + 1
+            status['counters']['generic']['error'] = status['counters']['generic']['error'] + 1
             raise HTTPException(status_code=400, detail="bad request")
 
         return True

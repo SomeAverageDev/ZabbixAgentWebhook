@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <zabbix_export>
     <version>5.0</version>
-    <date>2022-04-20T19:13:53Z</date>
+    <date>2022-04-20T20:41:44Z</date>
     <groups>
         <group>
             <name>Templates</name>
@@ -50,45 +50,6 @@ It provides all necessary items to collect JSON payload from main CSP.</descript
                             <name>Webhook</name>
                         </application>
                     </applications>
-                </item>
-                <item>
-                    <name>aws-sns decoded message</name>
-                    <type>DEPENDENT</type>
-                    <key>aws-sns[decoded]</key>
-                    <delay>0</delay>
-                    <history>7d</history>
-                    <trends>0</trends>
-                    <value_type>TEXT</value_type>
-                    <applications>
-                        <application>
-                            <name>AWS</name>
-                        </application>
-                    </applications>
-                    <preprocessing>
-                        <step>
-                            <type>JAVASCRIPT</type>
-                            <params>var data = JSON.parse(value); 
-return 'Message['+ data.Timestamp +']: '+ data.Subject +': '+ data.Message +' on topic:'+ data.TopicArn</params>
-                        </step>
-                        <step>
-                            <type>DISCARD_UNCHANGED_HEARTBEAT</type>
-                            <params>300</params>
-                        </step>
-                    </preprocessing>
-                    <master_item>
-                        <key>aws-sns</key>
-                    </master_item>
-                    <triggers>
-                        <trigger>
-                            <expression>{strlen()}&gt;0</expression>
-                            <recovery_mode>RECOVERY_EXPRESSION</recovery_mode>
-                            <recovery_expression>{nodata(1d)}=1</recovery_expression>
-                            <name>AWS-SNS {ITEM.LASTVALUE}</name>
-                            <priority>WARNING</priority>
-                            <type>MULTIPLE</type>
-                            <manual_close>YES</manual_close>
-                        </trigger>
-                    </triggers>
                 </item>
                 <item>
                     <name>webhook json data trapper : azure-monitor</name>
@@ -140,6 +101,16 @@ return 'Message['+ data.Timestamp +']: '+ data.Subject +': '+ data.Message +' on
                             <name>Webhook</name>
                         </application>
                     </applications>
+                    <triggers>
+                        <trigger>
+                            <expression>{strlen()}&gt;0</expression>
+                            <recovery_mode>NONE</recovery_mode>
+                            <name>Webhook generic event : {ITEM.VALUE}</name>
+                            <priority>INFO</priority>
+                            <type>MULTIPLE</type>
+                            <manual_close>YES</manual_close>
+                        </trigger>
+                    </triggers>
                 </item>
                 <item>
                     <name>webhook container health collection</name>
@@ -195,7 +166,7 @@ return 'Message['+ data.Timestamp +']: '+ data.Subject +': '+ data.Message +' on
                     <preprocessing>
                         <step>
                             <type>JSONPATH</type>
-                            <params>$.counters.aws-sns</params>
+                            <params>$.counters.aws-sns.received</params>
                             <error_handler>DISCARD_VALUE</error_handler>
                         </step>
                         <step>
@@ -225,7 +196,7 @@ return 'Message['+ data.Timestamp +']: '+ data.Subject +': '+ data.Message +' on
                     <preprocessing>
                         <step>
                             <type>JSONPATH</type>
-                            <params>$.counters.az-mon</params>
+                            <params>$.counters.az-mon.received</params>
                             <error_handler>DISCARD_VALUE</error_handler>
                         </step>
                         <step>
@@ -282,7 +253,7 @@ return 'Message['+ data.Timestamp +']: '+ data.Subject +': '+ data.Message +' on
                     <preprocessing>
                         <step>
                             <type>JSONPATH</type>
-                            <params>$.counters.gcp</params>
+                            <params>$.counters.gcp.received</params>
                             <error_handler>DISCARD_VALUE</error_handler>
                         </step>
                         <step>
@@ -309,7 +280,7 @@ return 'Message['+ data.Timestamp +']: '+ data.Subject +': '+ data.Message +' on
                     <preprocessing>
                         <step>
                             <type>JSONPATH</type>
-                            <params>$.counters.generic</params>
+                            <params>$.counters.generic.received</params>
                             <error_handler>DISCARD_VALUE</error_handler>
                         </step>
                         <step>

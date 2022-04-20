@@ -29,6 +29,7 @@ async def zbx_google_cloud_webhook(background_tasks: BackgroundTasks,
         Collect POST payload from webhook and send it to Zabbix trapper item
     :return: HTTP/200+OK or HTTP/400
     """
+    status['counters']['gcp']['received'] = status['counters']['gcp']['received'] + 1
     try:
         json_data = await request_data.json()
         #print('gcp:data:{}'.format(json_data))
@@ -41,10 +42,10 @@ async def zbx_google_cloud_webhook(background_tasks: BackgroundTasks,
         try:
             background_tasks.add_task(send_data_to_zabbix_server, s, h, k, json_data)
             #print('gcp:send_data_to_zabbix_server:server: {}, hostname: {}, key: {}; data:{}'.format(s, h, k, json_data))
-            status['counters']['gcp'] = status['counters']['gcp'] + 1
         except Exception as e:
             print('gcp:error:{}'.format(e), file=sys.stderr)
             status['counters']['error'] = status['counters']['error'] + 1
+            status['counters']['gcp']['error'] = status['counters']['gcp']['error'] + 1
             raise HTTPException(status_code=400, detail="bad request")
 
         return True

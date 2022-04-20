@@ -30,6 +30,7 @@ async def zbx_azure_monitor_webhook(background_tasks: BackgroundTasks,
         Collect POST payload from webhook and send it to Zabbix trapper item
     :return: HTTP/200+OK or HTTP/400
     """
+    status['counters']['az-mon']['received'] = status['counters']['az-mon']['received'] + 1
     try:
         json_data = await request_data.json()
         #print('az-mon:data:{}'.format(json_data))
@@ -42,10 +43,10 @@ async def zbx_azure_monitor_webhook(background_tasks: BackgroundTasks,
         try:
             background_tasks.add_task(send_data_to_zabbix_server, s, h, k, json_data)
             #print('az-mon:send_data_to_zabbix_server:server: {}, hostname: {}, key: {}; data:{}'.format(s, h, k, json_data))
-            status['counters']['az-mon'] = status['counters']['az-mon'] + 1
         except Exception as e:
             print('az-mon:error:{}'.format(e), file=sys.stderr)
             status['counters']['error'] = status['counters']['error'] + 1
+            status['counters']['az-mon']['error'] = status['counters']['az-mon']['error'] + 1
             raise HTTPException(status_code=400, detail="bad request")
 
         return True

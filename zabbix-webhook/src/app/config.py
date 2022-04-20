@@ -14,6 +14,7 @@ defaults = {
     'azure_item': 'az-mon',
     'awssns_item': 'aws-sns',
     'gcp_item': 'gcp',
+    'awssns_subscribe-url-validation': '.amazonaws.com/?Action=ConfirmSubscription',
 }
 
 """
@@ -81,9 +82,9 @@ status = {
     'worker': os.getpid(),
     'counters': {
         'error': 0,
-        'generic': 0,
-        'aws-sns': 0,
-        'az-mon': 0,
-        'gcp': 0,
+        'generic': {'received': 0, 'error': 0},
+        'aws-sns': {'received': 0, 'error': 0},
+        'az-mon': {'received': 0, 'error': 0},
+        'gcp': {'received': 0, 'error': 0},
     }
 }
