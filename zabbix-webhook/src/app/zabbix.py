@@ -25,5 +25,6 @@ def send_data_to_zabbix_server(server, hostname, key, json_data):
 
     except Exception as e:
         print('send_data_to_zabbix_server:exception:{}'.format(e), file=sys.stderr)
+        return None
 
-    return result
+    return True
