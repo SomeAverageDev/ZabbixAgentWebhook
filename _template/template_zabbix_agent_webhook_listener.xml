@@ -36,7 +36,7 @@ It provides all necessary items to collect JSON payload from main CSP.</descript
                 <item>
                     <name>webhook json data trapper : aws-sns</name>
                     <type>TRAP</type>
-                    <key>aws-sns</key>
+                    <key>zwl.aws-sns</key>
                     <delay>0</delay>
                     <history>1h</history>
                     <trends>0</trends>
@@ -54,7 +54,7 @@ It provides all necessary items to collect JSON payload from main CSP.</descript
                 <item>
                     <name>webhook json data trapper : azure-monitor</name>
                     <type>TRAP</type>
-                    <key>az-mon</key>
+                    <key>zwl.az-mon</key>
                     <delay>0</delay>
                     <history>1h</history>
                     <trends>0</trends>
@@ -72,7 +72,7 @@ It provides all necessary items to collect JSON payload from main CSP.</descript
                 <item>
                     <name>webhook json data trapper : gcp</name>
                     <type>TRAP</type>
-                    <key>gcp</key>
+                    <key>zwl.gcp</key>
                     <delay>0</delay>
                     <history>1h</history>
                     <trends>0</trends>
@@ -90,7 +90,7 @@ It provides all necessary items to collect JSON payload from main CSP.</descript
                 <item>
                     <name>webhook json data trapper : generic</name>
                     <type>TRAP</type>
-                    <key>webhook</key>
+                    <key>zwl.webhook</key>
                     <delay>0</delay>
                     <history>1h</history>
                     <trends>0</trends>
@@ -115,7 +115,7 @@ It provides all necessary items to collect JSON payload from main CSP.</descript
                 <item>
                     <name>webhook container health collection</name>
                     <type>HTTP_AGENT</type>
-                    <key>webhook.countainer.health[{$ZBX_WHL_HOST},{$ZBX_WHL_PORT}]</key>
+                    <key>zwl.webhook.countainer.health[{$ZBX_WHL_HOST},{$ZBX_WHL_PORT}]</key>
                     <history>7d</history>
                     <trends>0</trends>
                     <value_type>TEXT</value_type>
@@ -151,7 +151,7 @@ It provides all necessary items to collect JSON payload from main CSP.</descript
                 <item>
                     <name>webhook stats counter AWS-SNS</name>
                     <type>DEPENDENT</type>
-                    <key>webhook.countainer.stats.aws-sns</key>
+                    <key>zwl.webhook.countainer.stats.aws-sns</key>
                     <delay>0</delay>
                     <history>30d</history>
                     <description>Number of payloads received from AWS-SNS</description>
@@ -175,13 +175,13 @@ It provides all necessary items to collect JSON payload from main CSP.</descript
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>webhook.countainer.stats[{$ZBX_WHL_HOST},{$ZBX_WHL_PORT}]</key>
+                        <key>zwl.webhook.countainer.stats[{$ZBX_WHL_HOST},{$ZBX_WHL_PORT}]</key>
                     </master_item>
                 </item>
                 <item>
                     <name>webhook stats counter Azure</name>
                     <type>DEPENDENT</type>
-                    <key>webhook.countainer.stats.azure</key>
+                    <key>zwl.webhook.countainer.stats.azure</key>
                     <delay>0</delay>
                     <history>30d</history>
                     <description>Number of payloads received from Azure</description>
@@ -205,13 +205,13 @@ It provides all necessary items to collect JSON payload from main CSP.</descript
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>webhook.countainer.stats[{$ZBX_WHL_HOST},{$ZBX_WHL_PORT}]</key>
+                        <key>zwl.webhook.countainer.stats[{$ZBX_WHL_HOST},{$ZBX_WHL_PORT}]</key>
                     </master_item>
                 </item>
                 <item>
                     <name>webhook stats errors count</name>
                     <type>DEPENDENT</type>
-                    <key>webhook.countainer.stats.errors</key>
+                    <key>zwl.webhook.countainer.stats.errors</key>
                     <delay>0</delay>
                     <history>30d</history>
                     <description>Number of errors detected</description>
@@ -232,13 +232,13 @@ It provides all necessary items to collect JSON payload from main CSP.</descript
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>webhook.countainer.stats[{$ZBX_WHL_HOST},{$ZBX_WHL_PORT}]</key>
+                        <key>zwl.webhook.countainer.stats[{$ZBX_WHL_HOST},{$ZBX_WHL_PORT}]</key>
                     </master_item>
                 </item>
                 <item>
                     <name>webhook stats counter GCP</name>
                     <type>DEPENDENT</type>
-                    <key>webhook.countainer.stats.gcp</key>
+                    <key>zwl.webhook.countainer.stats.gcp</key>
                     <delay>0</delay>
                     <history>30d</history>
                     <description>Number of payloads received from GCP</description>
@@ -262,13 +262,13 @@ It provides all necessary items to collect JSON payload from main CSP.</descript
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>webhook.countainer.stats[{$ZBX_WHL_HOST},{$ZBX_WHL_PORT}]</key>
+                        <key>zwl.webhook.countainer.stats[{$ZBX_WHL_HOST},{$ZBX_WHL_PORT}]</key>
                     </master_item>
                 </item>
                 <item>
                     <name>webhook stats counter Generic</name>
                     <type>DEPENDENT</type>
-                    <key>webhook.countainer.stats.generic</key>
+                    <key>zwl.webhook.countainer.stats.generic</key>
                     <delay>0</delay>
                     <history>30d</history>
                     <description>Number of payloads received from generic</description>
@@ -289,13 +289,13 @@ It provides all necessary items to collect JSON payload from main CSP.</descript
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>webhook.countainer.stats[{$ZBX_WHL_HOST},{$ZBX_WHL_PORT}]</key>
+                        <key>zwl.webhook.countainer.stats[{$ZBX_WHL_HOST},{$ZBX_WHL_PORT}]</key>
                     </master_item>
                 </item>
                 <item>
                     <name>webhook stats error messages</name>
                     <type>DEPENDENT</type>
-                    <key>webhook.countainer.stats.messages</key>
+                    <key>zwl.webhook.countainer.stats.messages</key>
                     <delay>0</delay>
                     <history>30d</history>
                     <trends>0</trends>
@@ -318,13 +318,13 @@ It provides all necessary items to collect JSON payload from main CSP.</descript
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>webhook.countainer.stats[{$ZBX_WHL_HOST},{$ZBX_WHL_PORT}]</key>
+                        <key>zwl.webhook.countainer.stats[{$ZBX_WHL_HOST},{$ZBX_WHL_PORT}]</key>
                     </master_item>
                 </item>
                 <item>
                     <name>webhook stats startup time</name>
                     <type>DEPENDENT</type>
-                    <key>webhook.countainer.stats.started</key>
+                    <key>zwl.webhook.countainer.stats.started</key>
                     <delay>0</delay>
                     <history>30d</history>
                     <units>unixtime</units>
@@ -345,13 +345,13 @@ It provides all necessary items to collect JSON payload from main CSP.</descript
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>webhook.countainer.stats[{$ZBX_WHL_HOST},{$ZBX_WHL_PORT}]</key>
+                        <key>zwl.webhook.countainer.stats[{$ZBX_WHL_HOST},{$ZBX_WHL_PORT}]</key>
                     </master_item>
                 </item>
                 <item>
                     <name>webhook stats status</name>
                     <type>DEPENDENT</type>
-                    <key>webhook.countainer.stats.status</key>
+                    <key>zwl.webhook.countainer.stats.status</key>
                     <delay>0</delay>
                     <history>30d</history>
                     <description>Zabbix Agent Webhook Listener Docker container status</description>
@@ -375,13 +375,13 @@ It provides all necessary items to collect JSON payload from main CSP.</descript
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>webhook.countainer.stats[{$ZBX_WHL_HOST},{$ZBX_WHL_PORT}]</key>
+                        <key>zwl.webhook.countainer.stats[{$ZBX_WHL_HOST},{$ZBX_WHL_PORT}]</key>
                     </master_item>
                 </item>
                 <item>
                     <name>webhook container stats collection</name>
                     <type>HTTP_AGENT</type>
-                    <key>webhook.countainer.stats[{$ZBX_WHL_HOST},{$ZBX_WHL_PORT}]</key>
+                    <key>zwl.webhook.countainer.stats[{$ZBX_WHL_HOST},{$ZBX_WHL_PORT}]</key>
                     <delay>5m</delay>
                     <history>7d</history>
                     <trends>0</trends>
@@ -403,13 +403,13 @@ It provides all necessary items to collect JSON payload from main CSP.</descript
                 <discovery_rule>
                     <name>aws-sns message discovery</name>
                     <type>DEPENDENT</type>
-                    <key>aws-sns[discovery]</key>
+                    <key>zwl.aws-sns[discovery]</key>
                     <delay>0</delay>
                     <item_prototypes>
                         <item_prototype>
                             <name>aws-sns message : {#ID} on topic {#TOPIC}</name>
                             <type>DEPENDENT</type>
-                            <key>aws-sns.message[{#ID}]</key>
+                            <key>zwl.aws-sns.message[{#ID}]</key>
                             <delay>0</delay>
                             <history>7d</history>
                             <trends>0</trends>
@@ -428,7 +428,7 @@ return 'Message['+ data.Timestamp +']: '+ message.AlarmName +': ' + message.NewS
                                 </step>
                             </preprocessing>
                             <master_item>
-                                <key>aws-sns</key>
+                                <key>zwl.aws-sns</key>
                             </master_item>
                             <trigger_prototypes>
                                 <trigger_prototype>
@@ -443,7 +443,7 @@ return 'Message['+ data.Timestamp +']: '+ message.AlarmName +': ' + message.NewS
                         </item_prototype>
                     </item_prototypes>
                     <master_item>
-                        <key>aws-sns</key>
+                        <key>zwl.aws-sns</key>
                     </master_item>
                     <lld_macro_paths>
                         <lld_macro_path>
@@ -465,14 +465,14 @@ return 'Message['+ data.Timestamp +']: '+ message.AlarmName +': ' + message.NewS
                 <discovery_rule>
                     <name>Azure monitor alerts discovery</name>
                     <type>DEPENDENT</type>
-                    <key>azure.alerts[discovery]</key>
+                    <key>zwl.azure.alerts[discovery]</key>
                     <delay>0</delay>
                     <lifetime>7d</lifetime>
                     <item_prototypes>
                         <item_prototype>
                             <name>Azure alert state [{#ID}]</name>
                             <type>DEPENDENT</type>
-                            <key>az.alert.state[{#ID}]</key>
+                            <key>zwl.az.alert.state[{#ID}]</key>
                             <delay>0</delay>
                             <history>7d</history>
                             <trends>0</trends>
@@ -490,13 +490,13 @@ return 'Message['+ data.Timestamp +']: '+ message.AlarmName +': ' + message.NewS
                                 </step>
                             </preprocessing>
                             <master_item>
-                                <key>az-mon</key>
+                                <key>zwl.az-mon</key>
                             </master_item>
                         </item_prototype>
                         <item_prototype>
                             <name>Azure alert summary [{#ID}]</name>
                             <type>DEPENDENT</type>
-                            <key>az.alert.summary[{#ID}]</key>
+                            <key>zwl.az.alert.summary[{#ID}]</key>
                             <delay>0</delay>
                             <history>7d</history>
                             <trends>0</trends>
@@ -527,7 +527,7 @@ return 'unknown azure format:'+JSON.stringify(data)
                                 </step>
                             </preprocessing>
                             <master_item>
-                                <key>az-mon</key>
+                                <key>zwl.az-mon</key>
                             </master_item>
                         </item_prototype>
                     </item_prototypes>
@@ -570,7 +570,7 @@ return 'unknown azure format:'+JSON.stringify(data)
                         </trigger_prototype>
                     </trigger_prototypes>
                     <master_item>
-                        <key>az-mon</key>
+                        <key>zwl.az-mon</key>
                     </master_item>
                     <lld_macro_paths>
                         <lld_macro_path>
@@ -601,14 +601,14 @@ return 'unknown azure format:'+JSON.stringify(data)
                 <discovery_rule>
                     <name>GCP alert discovery</name>
                     <type>DEPENDENT</type>
-                    <key>gcp.alerts[discovery]</key>
+                    <key>zwl.gcp.alerts[discovery]</key>
                     <delay>0</delay>
                     <lifetime>7d</lifetime>
                     <item_prototypes>
                         <item_prototype>
                             <name>GCP alert state [{#ID}]</name>
                             <type>DEPENDENT</type>
-                            <key>gcp.state[{#ID}]</key>
+                            <key>zwl.gcp.state[{#ID}]</key>
                             <delay>0</delay>
                             <history>7d</history>
                             <trends>0</trends>
@@ -630,13 +630,13 @@ return 'unknown azure format:'+JSON.stringify(data)
                                 </step>
                             </preprocessing>
                             <master_item>
-                                <key>gcp</key>
+                                <key>zwl.gcp</key>
                             </master_item>
                         </item_prototype>
                         <item_prototype>
                             <name>GCP alert summary [{#ID}]</name>
                             <type>DEPENDENT</type>
-                            <key>gcp.summary[{#ID}]</key>
+                            <key>zwl.gcp.summary[{#ID}]</key>
                             <delay>0</delay>
                             <history>7d</history>
                             <trends>0</trends>
@@ -663,7 +663,7 @@ return 'unknown azure format:'+JSON.stringify(data)
                                 </step>
                             </preprocessing>
                             <master_item>
-                                <key>gcp</key>
+                                <key>zwl.gcp</key>
                             </master_item>
                         </item_prototype>
                     </item_prototypes>
@@ -679,7 +679,7 @@ return 'unknown azure format:'+JSON.stringify(data)
                         </trigger_prototype>
                     </trigger_prototypes>
                     <master_item>
-                        <key>gcp</key>
+                        <key>zwl.gcp</key>
                     </master_item>
                     <lld_macro_paths>
                         <lld_macro_path>

@@ -58,7 +58,6 @@ COPY --chown=appuser:appgroup ./src/ ./
 
 USER appuser
 
-
 # set env variables
 ENV ZWL_PORT 80
 

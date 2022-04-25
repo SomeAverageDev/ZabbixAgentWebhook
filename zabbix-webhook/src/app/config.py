@@ -10,10 +10,10 @@ defaults = {
     'password': 'password',
     'zabbix_server': '127.0.0.1',
     'zabbix_host': 'Zabbix server',
-    'generic_item': 'webhook',
-    'azure_item': 'az-mon',
-    'awssns_item': 'aws-sns',
-    'gcp_item': 'gcp',
+    'generic_item_key': 'zwl.webhook',
+    'azure_item_key': 'zwl.az-mon',
+    'awssns_item_key': 'zwl.aws-sns',
+    'gcp_item_key': 'zwl.gcp',
     'awssns_subscribe-url-validation': '.amazonaws.com/?Action=ConfirmSubscription',
 }
 
@@ -65,10 +65,10 @@ Configure CSP Webhooks to the related Zabbix Agent Webhook Listener API endpoint
 * **ZWL_PASSWORD** : Password for authentication, default : 'password'
 * **ZWL_ZABBIX_SERVER** : Zabbix Server destination **IP address** or FQDN, default : '127.0.0.1'
 * **ZWL_ZABBIX_HOST** : Name of the host collecting data, **it must be linked to Zabbix template**, default : 'Zabbix server'
-* **ZWL_GENERIC_ITEM** : Name of the Zabbix item to collect generic payload, default : 'webhook'
-* **ZWL_AZURE_ITEM** : Name of the Zabbix item to collect Azure payload, default : 'az-mon'
-* **ZWL_AWSSNS_ITEM** : Name of the Zabbix item to collect AWS SNS Events payload, default : 'aws-sns'
-* **ZWL_GCP_ITEM** : Name of the Zabbix item to collect Google Cloud Platform Monitoring alerts payload, default : 'gcp'
+* **ZWL_GENERIC_ITEM_KEY** : Name of the Zabbix item to collect generic payload, default : 'zwl.webhook'
+* **ZWL_AZURE_ITEM_KEY** : Name of the Zabbix item to collect Azure payload, default : 'zwl.az-mon'
+* **ZWL_AWSSNS_ITEM_KEY** : Name of the Zabbix item to collect AWS SNS Events payload, default : 'zwl.aws-sns'
+* **ZWL_GCP_ITEM_KEY** : Name of the Zabbix item to collect Google Cloud Platform Monitoring alerts payload, default : 'zwl.gcp'
 
 """
 }

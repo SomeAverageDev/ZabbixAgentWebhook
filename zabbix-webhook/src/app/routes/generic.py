@@ -19,7 +19,7 @@ generic_route = APIRouter()
 async def zbx_generic_webhook(background_tasks: BackgroundTasks,
                               request_data: Request,
                               auth: str = Depends(get_current_username),
-                              k: str | None = defaults['generic_item'],
+                              k: str | None = defaults['generic_item_key'],
                               s: str | None = defaults['zabbix_server'],
                               h: str | None = defaults['zabbix_host']
                               ):

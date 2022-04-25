@@ -21,7 +21,7 @@ async def aws_sns_message(background_tasks: BackgroundTasks,
                           request_data: Request,
                           auth: str = Depends(get_current_username),
                           x_amz_sns_message_type: str | None = Header(None),
-                          k: str | None = defaults['awssns_item'],
+                          k: str | None = defaults['awssns_item_key'],
                           s: str | None = defaults['zabbix_server'],
                           h: str | None = defaults['zabbix_host']
                           ):
