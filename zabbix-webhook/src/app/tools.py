@@ -1,3 +1,8 @@
+"""
+Goal: Implement various API tools
+@authors:
+    Gaël MONDON
+"""
 import json
 
 

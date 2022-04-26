@@ -1,5 +1,7 @@
-"""
-    Define global variables
+""""
+Goal: Define global variables
+@authors:
+    Gaël MONDON
 """
 import time
 import os

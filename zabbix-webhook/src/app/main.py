@@ -1,5 +1,5 @@
 """
-Goal: Main FastAPI application
+Goal: Main Zabbix Agent Webhook Listener application
 @authors:
     Gaël MONDON
 """

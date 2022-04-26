@@ -1,3 +1,8 @@
+"""
+Goal: Implement basic HTTP authentication login/password logic
+@authors:
+    Gaël MONDON
+"""
 import secrets
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
