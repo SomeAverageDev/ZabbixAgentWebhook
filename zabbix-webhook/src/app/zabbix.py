@@ -1,5 +1,5 @@
 """
-Goal: Manager Zabbix data
+Goal: Manager Zabbix data exchange
 @authors:
     Gaël MONDON
 """
@@ -11,10 +11,10 @@ from pyzabbix import ZabbixMetric, ZabbixSender
 from app.config import status
 
 
-def send_data_to_zabbix_server(server, hostname, key, json_data):
+def send_data_to_zabbix_server(server, hostname, key, json_data, port=10051):
     # print('js_data:{}'.format(json_data))
     try:
-        result = ZabbixSender(server).send(
+        result = ZabbixSender(zabbix_server=server, zabbix_port=port).send(
             [ZabbixMetric(hostname, key, json.dumps(json_data), int(time.time()))]
         )
 #        print('send_data_to_zabbix_server:result:{}'.format(result))
