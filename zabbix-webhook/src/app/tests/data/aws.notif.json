@@ -1,0 +1,12 @@
+{
+    "Type": "Notification",
+    "MessageId": "1466ec57-215a-5e3c-ad5f-b44e6e6c2698",
+    "TopicArn": "arn:aws:sns:ap-southeast-2:17533345645675:AWS_DCS_PROD_WINDOWS",
+    "Subject": "ALARM: \"server-logicaldiskfree-moni-083ee6547856a1bc1\" in Asia Pacific (Sydney)",
+    "Message": "{\"AlarmName\":\"server-logicaldiskfree-moni-083ee6547856a1bc1\",\"AlarmDescription\":\"Alarm when Logical free disk is less than 10%\",\"AWSAccountId\":\"175332051639\",\"NewStateValue\":\"ALARM\",\"NewStateReason\":\"Threshold Crossed: 1 datapoint [1.3441221714019775 (01/11/20 23:59:00)] was less than or equal to the threshold (10.0).\",\"StateChangeTime\":\"2020-11-02T00:04:06.730+0000\",\"Region\":\"Asia Pacific (Sydney)\",\"AlarmArn\":\"arn:aws:cloudwatch:ap-southeast-2:175332051639:alarm:server-logicaldiskfree-moni-083ee6547856a1bc1\",\"OldStateValue\":\"INSUFFICIENT_DATA\",\"Trigger\":{\"MetricName\":\"LogicalDisk % Free Space\",\"Namespace\":\"CWAgent\",\"StatisticType\":\"Statistic\",\"Statistic\":\"AVERAGE\",\"Unit\":null,\"Dimensions\":[{\"value\":\"C:\",\"name\":\"instance\"},{\"value\":\"i-0987654321\",\"name\":\"InstanceId\"},{\"value\":\"ami-04604b4eb0ec93b5f\",\"name\":\"ImageId\"},{\"value\":\"LogicalDisk\",\"name\":\"objectname\"},{\"value\":\"t3.medium\",\"name\":\"InstanceType\"}],\"Period\":300,\"EvaluationPeriods\":1,\"ComparisonOperator\":\"LessThanOrEqualToThreshold\",\"Threshold\":10.0,\"TreatMissingData\":\"- TreatMissingData: missing\",\"EvaluateLowSampleCountPercentile\":\"\"}}",
+    "Timestamp": "2020-11-02T00:04:06.776Z",
+    "SignatureVersion": "1",
+    "Signature": "S0hCeJzpTkdOBEp4zU3csNUrVIewsV0azPSEcnZS6fnHFXU78OvsytfxIr46Cb+yWgVLcXIUIo/rt1nuhn0wybJwoHmB1EAUio8fDvmL63yWs7LfWQqO/QHc2nE76BFaPDejC9KSnjZMe4oqdhqNMGbeqBe+WaGQM+vacm58x012ZeUCv6Hb2o7MxplkF751R20fj0Y7M4FtI5Ry9a9E//seHvrwGkfmm3D1OoxhGihfQPkQK6/onXwi+w+T/Qde4pIu2ijYQG1sbsbO1MyHPATD3h+/JvJ8QXevW4BJfcbQTXExRfN1uC6OUx5R5tBMzD456sDh84MDmRigXHeHfg==",
+    "SigningCertURL": "https://sns.ap-southeast-2.amazonaws.com/SimpleNotificationService-a86cb10b4e1f29c941702d737128f7b6.pem",
+    "UnsubscribeURL": "https://sns.ap-southeast-2.amazonaws.com/?Action=Unsubscribe&SubscriptionArn=arn:aws:sns:ap-southeast-2:175332051639:AWS_DCS_PROD_WINDOWS:10d89240-cba4-4be4-9310-16c0f78b9d82"
+}

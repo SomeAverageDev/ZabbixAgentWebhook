@@ -16,11 +16,11 @@ valid_credentials = base64.b64encode(str.encode("{}:{}".format(defaults['usernam
 
 client = TestClient(app)
 
+
 def read_json_file(filename):
     # read file
     with open(filename, 'r') as file:
         return file.read()
-
 
 
 def test_post_global(url, data):
@@ -70,20 +70,21 @@ def test_get_help():
 
 
 if __name__ == "__main__":
+    data_dir = './tests/data'
     """ Health & stats """
     test_get_help()
     test_get_health()
     test_get_health_stats()
 
     """ Generic """
-    test_post_generic(read_json_file('../test/generic.json'))
+    test_post_generic(read_json_file(data_dir+'/generic.json'))
 
     """ Azure """
-    test_post_azure_common(read_json_file('../test/azure.common.json'))
+    test_post_azure_common(read_json_file(data_dir+'/azure.common.json'))
 
     """ GCP """
-    test_post_gcp(read_json_file('../test/gcp.incident1.json'))
+    test_post_gcp(read_json_file(data_dir+'/gcp.incident1.json'))
 
     """ AWS """
-    test_post_aws(read_json_file('../test/aws.notif.json'))
+    test_post_aws(read_json_file(data_dir+'/aws.notif.json'))
 

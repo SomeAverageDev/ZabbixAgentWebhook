@@ -1,0 +1,59 @@
+{
+  "incident": {
+    "condition": {
+      "conditionThreshold": {
+        "aggregations": [
+          {
+            "alignmentPeriod": "600s",
+            "perSeriesAligner": "ALIGN_MAX"
+          }
+        ],
+        "comparison": "COMPARISON_GT",
+        "duration": "0s",
+        "filter": "resource.type = \"gce_instance\" AND metric.type = \"compute.googleapis.com/instance/uptime_total\"",
+        "thresholdValue": 1500,
+        "trigger": {
+          "count": 1
+        }
+      },
+      "displayName": "VM Instance - Uptime Total",
+      "name": "projects/qwiklabs-gcp-01-da829e3a5f83/alertPolicies/10105367611218090160/conditions/16469545923567919416"
+    },
+    "condition_name": "VM Instance - Uptime Total",
+    "ended_at": null,
+    "incident_id": "0.mgredb0nzyff",
+    "metadata": {
+      "system_labels": {},
+      "user_labels": {}
+    },
+    "metric": {
+      "displayName": "Uptime Total",
+      "labels": {
+        "instance_name": "nginxstack-3"
+      },
+      "type": "compute.googleapis.com/instance/uptime_total"
+    },
+    "observed_value": "1559.000",
+    "policy_name": "this is an alert name test",
+    "resource": {
+      "labels": {
+        "instance_id": "548374233453296406",
+        "project_id": "qwiklabs-gcp-01-da829e3a5f83",
+        "zone": "us-central1-f"
+      },
+      "type": "gce_instance"
+    },
+    "resource_display_name": "nginxstack-3",
+    "resource_id": "",
+    "resource_name": "qwiklabs-gcp-01-da829e3a5f83 nginxstack-3",
+    "resource_type_display_name": "VM Instance",
+    "scoping_project_id": "qwiklabs-gcp-01-da829e3a5f83",
+    "scoping_project_number": 119691006826,
+    "started_at": 1649954047,
+    "state": "open",
+    "summary": "Uptime Total for qwiklabs-gcp-01-da829e3a5f83 nginxstack-3 with metric labels {instance_name=nginxstack-3} is above the threshold of 1500.000 with a value of 1559.000.",
+    "threshold_value": "1500",
+    "url": "https://console.cloud.google.com/monitoring/alerting/incidents/0.mgredb0nzyff?project=qwiklabs-gcp-01-da829e3a5f83"
+  },
+  "version": "1.2"
+}

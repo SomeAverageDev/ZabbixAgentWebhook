@@ -25,9 +25,7 @@ jobs:
     - name: Test with pytest
       run: |
         pip install pytest
-        cd zabbix-webhook/src/app&&pytest test.py
-        with:
-          context: zabbix-webhook/src/app
+        export PYTHONPATH=zabbix-webhook/src/app&&python -m pytest tests/test_main.py
 
   build-and-push-image:
     runs-on: ubuntu-latest
