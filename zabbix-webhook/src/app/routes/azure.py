@@ -37,7 +37,7 @@ async def zbx_azure_monitor_webhook(background_tasks: BackgroundTasks,
     except Exception as e:
         print('az-mon:error:{}'.format(e), file=sys.stderr)
         status['counters']['error'] = status['counters']['error'] + 1
-        raise HTTPException(status_code=400, detail="bad request")
+        raise HTTPException(status_code=406)
 
     if validate_json(json_data):
         try:
@@ -47,8 +47,8 @@ async def zbx_azure_monitor_webhook(background_tasks: BackgroundTasks,
             print('az-mon:error:{}'.format(e), file=sys.stderr)
             status['counters']['error'] = status['counters']['error'] + 1
             status['counters']['az-mon']['error'] = status['counters']['az-mon']['error'] + 1
-            raise HTTPException(status_code=400, detail="bad request")
+            raise HTTPException(status_code=406)
 
         return True
     else:
-        raise HTTPException(status_code=400, detail="bad request")
+        raise HTTPException(status_code=400)

@@ -38,9 +38,11 @@ async def aws_sns_message(background_tasks: BackgroundTasks,
     except Exception as e:
         print('aws-sns:error loading payload:{}'.format(e), file=sys.stderr)
         status['counters']['error'] = status['counters']['error'] + 1
-        raise HTTPException(status_code=400, detail="bad request")
+        raise HTTPException(status_code=406)
 
-    if (x_amz_sns_message_type == 'SubscriptionConfirmation') and ('SubscribeURL' in json_data):
+    if (x_amz_sns_message_type is not None)\
+            and (x_amz_sns_message_type == 'SubscriptionConfirmation')\
+            and ('SubscribeURL' in json_data):
         if json_data['SubscribeURL'].find(defaults['awssns_subscribe-url-validation']) > 0:
             # subscribe to the AWS SNS topic
             print('aws-sns:subscribe-url:{}'.format(json_data['SubscribeURL']))
@@ -51,9 +53,10 @@ async def aws_sns_message(background_tasks: BackgroundTasks,
             print('aws-sns:subscribe-url:error:SubscribeURL Header does not match expected value: "{}"'.format(defaults['awssns_subscribe-url-validation']), file=sys.stderr)
             status['counters']['error'] = status['counters']['error'] + 1
             status['counters']['aws-sns']['error'] = status['counters']['aws-sns']['error'] + 1
-            raise HTTPException(status_code=400, detail="bad request")
+            raise HTTPException(status_code=406)
 
-    if x_amz_sns_message_type is not None and x_amz_sns_message_type == 'Notification':
+    if x_amz_sns_message_type is not None\
+            and x_amz_sns_message_type == 'Notification':
         if validate_json(json_data):
             # forward notification payload to Zabbix trapper item
             try:
@@ -73,11 +76,11 @@ async def aws_sns_message(background_tasks: BackgroundTasks,
                 print('aws-sns:error:{}'.format(e), file=sys.stderr)
                 status['counters']['error'] = status['counters']['error'] + 1
                 status['counters']['aws-sns']['error'] = status['counters']['aws-sns']['error'] + 1
-                raise HTTPException(status_code=400, detail="bad request")
+                raise HTTPException(status_code=406)
 
             return True
 
-    raise HTTPException(status_code=400, detail="bad request")
+    raise HTTPException(status_code=400)
 
 
 def validate_aws_subscribe(url):

@@ -35,7 +35,7 @@ async def zbx_generic_webhook(background_tasks: BackgroundTasks,
     except Exception as e:
         print('generic:get json:error:{}'.format(e), file=sys.stderr)
         status['counters']['error'] = status['counters']['error'] + 1
-        raise HTTPException(status_code=400, detail="bad request")
+        raise HTTPException(status_code=406)
 
     if validate_json(json_data):
         try:
@@ -45,8 +45,8 @@ async def zbx_generic_webhook(background_tasks: BackgroundTasks,
             print('generic:send_data_to_zabbix_server:error:{}, server: {}, hostname: {}, key: {}'.format(e, s, h, k), file=sys.stderr)
             status['counters']['error'] = status['counters']['error'] + 1
             status['counters']['generic']['error'] = status['counters']['generic']['error'] + 1
-            raise HTTPException(status_code=400, detail="bad request")
+            raise HTTPException(status_code=406)
 
         return True
     else:
-        raise HTTPException(status_code=400, detail="bad request")
+        raise HTTPException(status_code=400)
