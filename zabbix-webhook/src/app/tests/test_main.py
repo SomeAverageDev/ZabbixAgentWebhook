@@ -23,36 +23,46 @@ def read_json_file(filename):
         return file.read()
 
 
-def test_post_global(url, data):
-    return client.post(url, json=data, headers={"Content-Type": "application/json", "Authorization": "Basic " + valid_credentials})
+def exec_post_global(url, data, add_headers=None):
+    h = {"Content-Type": "application/json", "Authorization": "Basic " + valid_credentials}
+    if add_headers is not None:
+        h = h | add_headers
+    #print('headers:{}'.format(h))
+    return client.post(url, json=data, headers=h)
 
 
-def test_post_aws(data):
-    response = test_post_global("/zabbix/aws/sns", data)
+def test_post_aws():
+    response = exec_post_global("/zabbix/aws/sns",
+                                read_json_file('./tests/data/aws.notif.json'),
+                                {'x-amz-sns-message-type': 'Notification'})
     print('test_post_aws.status_code:{}'.format(response.status_code))
     assert response.status_code == 200
 
 
-def test_post_gcp(data):
-    response = test_post_global("/zabbix/gcp", data)
+def test_post_gcp():
+    response = exec_post_global("/zabbix/gcp",
+                                read_json_file('./tests/data/gcp.incident1.json'))
     print('test_post_gcp.status_code:{}'.format(response.status_code))
     assert response.status_code == 200
 
 
-def test_post_azure_common(data):
-    response = test_post_global("/zabbix/azure/common", data)
+def test_post_azure_common():
+    response = exec_post_global("/zabbix/azure/common",
+                                read_json_file('./tests/data/azure.common.json'))
     print('test_post_azure_common.status_code:{}'.format(response.status_code))
     assert response.status_code == 200
 
 
-def test_post_generic(data):
-    response = test_post_global("/zabbix/generic", data)
+def test_post_generic():
+    response = exec_post_global("/zabbix/generic",
+                                read_json_file('./tests/data/generic.json'))
     print('test_post_generic.status_code:{}'.format(response.status_code))
     assert response.status_code == 200
 
 
 def test_get_health_stats():
-    response = client.get("/health/stats", headers={"Authorization": "Basic " + valid_credentials})
+    response = client.get("/health/stats",
+                          headers={"Authorization": "Basic " + valid_credentials})
     print('test_get_health_stats.status_code:{}'.format(response.status_code))
     assert response.status_code == 200
 
@@ -70,21 +80,20 @@ def test_get_help():
 
 
 if __name__ == "__main__":
-    data_dir = './tests/data'
     """ Health & stats """
     test_get_help()
     test_get_health()
     test_get_health_stats()
 
     """ Generic """
-    test_post_generic(read_json_file(data_dir+'/generic.json'))
+    test_post_generic()
 
     """ Azure """
-    test_post_azure_common(read_json_file(data_dir+'/azure.common.json'))
+    test_post_azure_common()
 
     """ GCP """
-    test_post_gcp(read_json_file(data_dir+'/gcp.incident1.json'))
+    test_post_gcp()
 
     """ AWS """
-    test_post_aws(read_json_file(data_dir+'/aws.notif.json'))
+    #test_post_aws()
 
