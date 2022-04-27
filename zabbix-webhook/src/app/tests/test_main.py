@@ -33,7 +33,7 @@ def exec_post_global(url, data, add_headers=None):
 
 def test_post_aws():
     response = exec_post_global("/zabbix/aws/sns",
-                                read_json_file('./tests/data/aws.notif.json'),
+                                read_json_file('app/tests/data/aws.notif.json'),
                                 {'x-amz-sns-message-type': 'Notification'})
     print('test_post_aws.status_code:{}'.format(response.status_code))
     assert response.status_code == 200
@@ -41,21 +41,21 @@ def test_post_aws():
 
 def test_post_gcp():
     response = exec_post_global("/zabbix/gcp",
-                                read_json_file('./tests/data/gcp.incident1.json'))
+                                read_json_file('app/tests/data/gcp.incident1.json'))
     print('test_post_gcp.status_code:{}'.format(response.status_code))
     assert response.status_code == 200
 
 
 def test_post_azure_common():
     response = exec_post_global("/zabbix/azure/common",
-                                read_json_file('./tests/data/azure.common.json'))
+                                read_json_file('app/tests/data/azure.common.json'))
     print('test_post_azure_common.status_code:{}'.format(response.status_code))
     assert response.status_code == 200
 
 
 def test_post_generic():
     response = exec_post_global("/zabbix/generic",
-                                read_json_file('./tests/data/generic.json'))
+                                read_json_file('app/tests/data/generic.json'))
     print('test_post_generic.status_code:{}'.format(response.status_code))
     assert response.status_code == 200
 
