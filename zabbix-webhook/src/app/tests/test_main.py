@@ -59,7 +59,7 @@ def test_post_aws(dummy_tcp_server):
     assert response.status_code == 200
 
 
-def test_post_aws_no_auth(dummy_tcp_server):
+def test_post_aws_no_auth():
     response = exec_post_global("/zabbix/aws/sns",
                                 {}, False)
     print('test_post_aws_no_auth.status_code:{}'.format(response.status_code))
@@ -73,7 +73,7 @@ def test_post_gcp(dummy_tcp_server):
     assert response.status_code == 200
 
 
-def test_post_gcp_no_auth(dummy_tcp_server):
+def test_post_gcp_no_auth():
     response = exec_post_global("/zabbix/gcp",
                                 {}, False)
     print('test_post_gcp_no_auth.status_code:{}'.format(response.status_code))

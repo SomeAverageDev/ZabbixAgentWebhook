@@ -14,7 +14,7 @@ class TCPServer:
 
     def __enter__(self):
         self._sock.bind((self._default_bind, self._default_port))
-        self._sock.settimeout(3)
+        self._sock.settimeout(5)
         return self
 
     def __exit__(self, exception_type, exception_value, traceback):
@@ -23,16 +23,9 @@ class TCPServer:
     def listen_for_traffic(self):
         while True:
             self._sock.listen(5)
-            connection = None
-            try:
-                connection, address = self._sock.accept()
-                message = connection.recv(10000)
-                response = None
-                connection.send(response.encode())
-            except Exception as e:
-                print('error:{}'.format(e))
-                break
-            finally:
-                if connection is not None:
-                    connection.close()
+            connection, address = self._sock.accept()
+            message = connection.recv(999999)
+            response = '{"response":"success","info":"processed: 1; failed: 0; total: 1; seconds spent: 0.000001"}'
+            connection.send(response.encode())
+            connection.close()
             break
