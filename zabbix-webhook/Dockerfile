@@ -35,7 +35,6 @@ RUN apk add --update \
 ##########
 FROM python:3.10-alpine
 
-RUN apk add --no-cache
 #    jpeg-dev zlib-dev \
 #    libmagic
 
@@ -45,18 +44,23 @@ COPY --from=base /svc /svc
 WORKDIR /svc
 RUN pip install --no-cache-dir --no-index --find-links=/svc/wheels -r requirements.txt && \
     mkdir -p /app && \
-    addgroup appgroup && \
-    adduser -D appuser -G appgroup && \
-    chown -R appuser:appgroup /app
+    addgroup appgroup 
+    #&& \
+#    adduser -D appuser -G appgroup && \
+ #   chown -R appuser:appgroup /app
+
+#RUN apk add --no-cache libcap && setcap 'cap_net_bind_service=+ep' uvicorn
 
 # create and set working directory
 WORKDIR /app
 
 # copy app code into container
 #COPY --chown=appuser:appgroup entrypoint.prod.sh .
-COPY --chown=appuser:appgroup ./src/ ./
 
-USER appuser
+#COPY --chown=appuser:appgroup ./src/ ./
+COPY ./src/ ./
+
+#USER appuser
 
 # set env variables
 ENV WEBSITES_PORT 80
@@ -68,11 +72,11 @@ ENV PYTHONDONTWRITEBYTECODE 1
 # Prevents Python from buffering stdout and stderr
 ENV PYTHONUNBUFFERED 1
 
-EXPOSE ${ZWL_PORT}/tcp
+EXPOSE ${WEBSITES_PORT}/tcp
 
 HEALTHCHECK --interval=1m --timeout=10s --retries=3 CMD curl --fail http://localhost:${ZWL_PORT}/health || exit 1
 
 # run entrypoint.prod.sh
 ENTRYPOINT ["/bin/sh"]
 #CMD ["-c", "gunicorn --bind ${ZWL_BIND:-0.0.0.0}:${WEBSITES_PORT:-${ZWL_PORT}} --timeout 600 --log-level=DEBUG --workers ${ZWL_WORKERS:-1} --threads ${ZWL_THREADS:-4} app.main:app --worker-class uvicorn.workers.UvicornH11Worker"]
-CMD ["-c", "uvicorn app.main:app --host 0.0.0.0 --port $WEBSITES_PORT"]
+CMD ["-c", "uvicorn app.main:app --host 0.0.0.0 --port ${WEBSITES_PORT}"]
