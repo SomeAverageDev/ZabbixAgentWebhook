@@ -11,3 +11,4 @@ test*
 *.ko
 *.gzip
 *.zip
+requirements.test.txt

@@ -3,11 +3,15 @@ Goal: Implement ZWL API testing
 @authors:
     Gaël MONDON
 """
-import base64
 import json
+import socket
+import base64
 import os
+import threading
+import pytest
 
 from fastapi.testclient import TestClient
+from app.tests import TCPServer
 from app.main import app
 from app.config import defaults
 
@@ -17,6 +21,16 @@ current_dir = os.getcwd()
 current_dir = current_dir + '/zabbix-webhook/src/app/tests/data'
 
 client = TestClient(app)
+
+
+@pytest.fixture()
+def dummy_tcp_server():
+    tcp_server = TCPServer.TCPServer()
+    with tcp_server as example_server:
+        thread = threading.Thread(target=example_server.listen_for_traffic)
+        thread.daemon = True
+        thread.start()
+        yield example_server
 
 
 def read_json_file(filename):
@@ -33,7 +47,7 @@ def exec_post_global(url, data, add_headers=None):
     return client.post(url, json=data, headers=h)
 
 
-def no_test_post_aws():
+def no_test_post_aws(dummy_tcp_server):
     response = exec_post_global("/zabbix/aws/sns",
                                 read_json_file(current_dir+'/aws.notif.json'),
                                 {'x-amz-sns-message-type': 'Notification'})
@@ -41,21 +55,21 @@ def no_test_post_aws():
     assert response.status_code == 200
 
 
-def test_post_gcp():
+def test_post_gcp(dummy_tcp_server):
     response = exec_post_global("/zabbix/gcp",
                                 read_json_file(current_dir+'/gcp.incident1.json'))
     print(current_dir+'/test_post_gcp.status_code:{}'.format(response.status_code))
     assert response.status_code == 200
 
 
-def test_post_azure_common():
+def test_post_azure_common(dummy_tcp_server):
     response = exec_post_global("/zabbix/azure/common",
                                 read_json_file(current_dir+'/azure.common.json'))
     print(current_dir+'/test_post_azure_common.status_code:{}'.format(response.status_code))
     assert response.status_code == 200
 
 
-def test_post_generic():
+def test_post_generic(dummy_tcp_server):
     response = exec_post_global("/zabbix/generic",
                                 read_json_file(current_dir+'/generic.json'))
     print(current_dir+'/test_post_generic.status_code:{}'.format(response.status_code))

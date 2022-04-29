@@ -21,11 +21,11 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install -r zabbix-webhook/src/requirements.txt
+        pip install -r zabbix-webhook/src/requirements.test.txt
     - name: Test with pytest
       run: |
         pip install pytest
-        export PYTHONPATH=./zabbix-webhook/src/app;pytest ./zabbix-webhook/src/app/tests/test_main.py
+        export PYTHONPATH=./zabbix-webhook/src/app;pytest ./zabbix-webhook/src/app/tests/
 
   build-and-push-image:
     needs: python-test-build
