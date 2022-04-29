@@ -59,7 +59,8 @@ COPY --chown=appuser:appgroup ./src/ ./
 USER appuser
 
 # set env variables
-ENV ZWL_PORT 80
+ENV WEBSITES_PORT 80
+ENV ZWL_PORT $WEBSITES_PORT
 
 ENV PYTHONPATH "${PYTHONPATH}:/app/app"
 # Prevents Python from writing pyc files to disc
@@ -67,7 +68,7 @@ ENV PYTHONDONTWRITEBYTECODE 1
 # Prevents Python from buffering stdout and stderr
 ENV PYTHONUNBUFFERED 1
 
-EXPOSE 80/tcp
+EXPOSE ${ZWL_PORT}/tcp
 
 HEALTHCHECK --interval=1m --timeout=10s --retries=3 CMD curl --fail http://localhost:${ZWL_PORT}/health || exit 1
 
