@@ -26,7 +26,7 @@ RUN apk add --update \
 #    libmagic \
 #    libpq-dev \
     && rm -rf /var/cache/apk/* \
-    && pip wheel -r requirements.txt --wheel-dir=/svc/wheels
+    && pip wheel --no-cache-dir -r requirements.txt --wheel-dir=/svc/wheels
 
 # the wheels are now here: /svc/wheels
 
@@ -43,7 +43,7 @@ COPY --from=base /svc /svc
 
 # create group and user used in this container
 WORKDIR /svc
-RUN pip install --no-index --find-links=/svc/wheels -r requirements.txt && \
+RUN pip install --no-cache-dir --no-index --find-links=/svc/wheels -r requirements.txt && \
     mkdir -p /app && \
     addgroup appgroup && \
     adduser -D appuser -G appgroup && \
