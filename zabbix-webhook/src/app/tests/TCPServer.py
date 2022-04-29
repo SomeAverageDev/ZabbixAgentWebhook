@@ -23,9 +23,16 @@ class TCPServer:
     def listen_for_traffic(self):
         while True:
             self._sock.listen(5)
-            connection, address = self._sock.accept()
-            message = connection.recv(10000)
-            response = "Received"
-            connection.send(response.encode())
-            connection.close()
+            connection = None
+            try:
+                connection, address = self._sock.accept()
+                message = connection.recv(10000)
+                response = None
+                connection.send(response.encode())
+            except Exception as e:
+                print('error:{}'.format(e))
+                break
+            finally:
+                if connection is not None:
+                    connection.close()
             break
