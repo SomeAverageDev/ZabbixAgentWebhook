@@ -4,4 +4,3 @@ fastapi==0.75.2
 py-zabbix==1.1.7
 requests>=2.24.0
 pytest
-socket
