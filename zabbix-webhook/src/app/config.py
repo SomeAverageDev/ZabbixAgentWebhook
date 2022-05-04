@@ -5,6 +5,9 @@ Goal: Define global variables
 """
 import time
 import os
+import logging
+
+gunicorn_logger = logging.getLogger('gunicorn.root')
 
 # parameters
 defaults = {
@@ -17,13 +20,8 @@ defaults = {
     'awssns_item_key': 'zwl.aws-sns',
     'gcp_item_key': 'zwl.gcp',
     'awssns_subscribe-url-validation': '.amazonaws.com/?Action=ConfirmSubscription',
+    'allow_override_server': False,
 }
-
-"""
- Setting defaults from environment variables
-"""
-for key in defaults:
-    defaults[key] = os.getenv('ZWL_' + key.upper(), defaults[key])
 
 # FastAPI config
 fast_api_config = {
@@ -33,6 +31,7 @@ fast_api_config = {
     'redoc_url': None,
     'description': """
 ## *Provides API Listeners for generic and main Cloud Services Providers alerts and events*
+https://github.com/SomeAverageDev/ZabbixAgentWebhook
 
 You will be able to collect JSON payloads from CSP services below:
 
@@ -90,3 +89,18 @@ status = {
         'gcp': {'received': 0, 'error': 0},
     }
 }
+
+
+"""
+ Override defaults from environment variables
+"""
+for key in defaults:
+    defaults[key] = os.getenv('ZWL_' + key.upper(), defaults[key])
+
+# boolean type
+defaults['allow_override_server'] = os.getenv('ZWL_ALLOW_OVERRIDE_SERVER', 'False').lower() in ('true', '1', 't')
+
+for key in defaults:
+    if key not in 'password':
+        gunicorn_logger.info('parameter:{}={}'.format(key, defaults[key]))
+
