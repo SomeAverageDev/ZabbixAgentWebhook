@@ -63,7 +63,7 @@ COPY ./src/ ./
 #USER appuser
 
 # set env variables
-ENV ZWL_PORT ${WEBSITES_PORT:-80}
+ENV PORT 8080
 
 ENV PYTHONPATH "${PYTHONPATH}:/app/app"
 # Prevents Python from writing pyc files to disc
@@ -71,11 +71,12 @@ ENV PYTHONDONTWRITEBYTECODE 1
 # Prevents Python from buffering stdout and stderr
 ENV PYTHONUNBUFFERED 1
 
-EXPOSE ${WEBSITES_PORT:-${ZWL_PORT}}/tcp
+EXPOSE ${WEBSITES_PORT:-${ZWL_PORT:-${PORT:-80}}}/tcp
 
-HEALTHCHECK --interval=1m --timeout=10s --retries=3 CMD curl --fail http://localhost:${ZWL_PORT}/health || exit 1
+HEALTHCHECK --interval=1m --timeout=10s --retries=3 CMD curl --fail http://localhost:${WEBSITES_PORT:-${ZWL_PORT}}/health || exit 1
 
 # run entrypoint.prod.sh
 ENTRYPOINT ["/bin/sh"]
 # --log-level=DEBUG
-CMD ["-c", "gunicorn --bind ${ZWL_BIND:-0.0.0.0}:${WEBSITES_PORT:-${ZWL_PORT}} --timeout 600 --workers ${ZWL_WORKERS:-1} --threads ${ZWL_THREADS:-4} app.main:app --worker-class uvicorn.workers.UvicornH11Worker"]
+# WEBSITES_PORT is for Azure App Container
+CMD ["-c", "gunicorn --bind ${ZWL_BIND:-0.0.0.0}:${WEBSITES_PORT:-${ZWL_PORT:-${PORT:-80}}} --timeout 600 --workers ${ZWL_WORKERS:-1} --threads ${ZWL_THREADS:-4} app.main:app --worker-class uvicorn.workers.UvicornWorker --log-config app/logging.conf --capture-output"]
