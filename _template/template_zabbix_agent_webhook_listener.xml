@@ -136,7 +136,7 @@ It provides all necessary items to collect JSON payload from main CSP.</descript
                             <dependencies>
                                 <dependency>
                                     <name>Zabbix webhook container health has no data since 30m</name>
-                                    <expression>{Zabbix Agent Webhook Listener:webhook.countainer.health[{$ZBX_WHL_HOST},{$ZBX_WHL_PORT}].nodata(30m)}=1</expression>
+                                    <expression>{Zabbix Agent Webhook Listener:zwl.webhook.countainer.health[{$ZBX_WHL_HOST},{$ZBX_WHL_PORT}].nodata(30m)}=1</expression>
                                 </dependency>
                             </dependencies>
                         </trigger>
@@ -533,37 +533,37 @@ return 'unknown azure format:'+JSON.stringify(data)
                     </item_prototypes>
                     <trigger_prototypes>
                         <trigger_prototype>
-                            <expression>{Zabbix Agent Webhook Listener:az.alert.summary[{#ID}].str(Sev0)}=1 and&#13;
-{Zabbix Agent Webhook Listener:az.alert.state[{#ID}].str(Resolved)}=0</expression>
+                            <expression>{Zabbix Agent Webhook Listener:zwl.az.alert.summary[{#ID}].str(Sev0)}=1 and&#13;
+{Zabbix Agent Webhook Listener:zwl.az.alert.state[{#ID}].str(Resolved)}=0</expression>
                             <recovery_mode>RECOVERY_EXPRESSION</recovery_mode>
-                            <recovery_expression>{Zabbix Agent Webhook Listener:az.alert.state[{#ID}].str(Resolved)}=1</recovery_expression>
+                            <recovery_expression>{Zabbix Agent Webhook Listener:zwl.az.alert.state[{#ID}].str(Resolved)}=1</recovery_expression>
                             <name>Azure alerts:{ITEM.VALUE}</name>
                             <priority>HIGH</priority>
                             <manual_close>YES</manual_close>
                         </trigger_prototype>
                         <trigger_prototype>
-                            <expression>{Zabbix Agent Webhook Listener:az.alert.summary[{#ID}].str(Sev1)}=1 and&#13;
-{Zabbix Agent Webhook Listener:az.alert.state[{#ID}].str(Resolved)}=0</expression>
+                            <expression>{Zabbix Agent Webhook Listener:zwl.az.alert.summary[{#ID}].str(Sev1)}=1 and&#13;
+{Zabbix Agent Webhook Listener:zwl.az.alert.state[{#ID}].str(Resolved)}=0</expression>
                             <recovery_mode>RECOVERY_EXPRESSION</recovery_mode>
-                            <recovery_expression>{Zabbix Agent Webhook Listener:az.alert.state[{#ID}].str(Resolved)}=1</recovery_expression>
+                            <recovery_expression>{Zabbix Agent Webhook Listener:zwl.az.alert.state[{#ID}].str(Resolved)}=1</recovery_expression>
                             <name>Azure alerts:{ITEM.VALUE}</name>
                             <priority>AVERAGE</priority>
                             <manual_close>YES</manual_close>
                         </trigger_prototype>
                         <trigger_prototype>
-                            <expression>{Zabbix Agent Webhook Listener:az.alert.summary[{#ID}].str(Sev2)}=1 and&#13;
-{Zabbix Agent Webhook Listener:az.alert.state[{#ID}].str(Resolved)}=0</expression>
+                            <expression>{Zabbix Agent Webhook Listener:zwl.az.alert.summary[{#ID}].str(Sev2)}=1 and&#13;
+{Zabbix Agent Webhook Listener:zwl.az.alert.state[{#ID}].str(Resolved)}=0</expression>
                             <recovery_mode>RECOVERY_EXPRESSION</recovery_mode>
-                            <recovery_expression>{Zabbix Agent Webhook Listener:az.alert.state[{#ID}].str(Resolved)}=1</recovery_expression>
+                            <recovery_expression>{Zabbix Agent Webhook Listener:zwl.az.alert.state[{#ID}].str(Resolved)}=1</recovery_expression>
                             <name>Azure alerts:{ITEM.VALUE}</name>
                             <priority>WARNING</priority>
                             <manual_close>YES</manual_close>
                         </trigger_prototype>
                         <trigger_prototype>
-                            <expression>{Zabbix Agent Webhook Listener:az.alert.summary[{#ID}].str(Sev4)}=1 and&#13;
-{Zabbix Agent Webhook Listener:az.alert.state[{#ID}].str(Resolved)}=0</expression>
+                            <expression>{Zabbix Agent Webhook Listener:zwl.az.alert.summary[{#ID}].str(Sev4)}=1 and&#13;
+{Zabbix Agent Webhook Listener:zwl.az.alert.state[{#ID}].str(Resolved)}=0</expression>
                             <recovery_mode>RECOVERY_EXPRESSION</recovery_mode>
-                            <recovery_expression>{Zabbix Agent Webhook Listener:az.alert.state[{#ID}].str(Resolved)}=1</recovery_expression>
+                            <recovery_expression>{Zabbix Agent Webhook Listener:zwl.az.alert.state[{#ID}].str(Resolved)}=1</recovery_expression>
                             <name>Azure alerts:{ITEM.VALUE}</name>
                             <priority>INFO</priority>
                             <manual_close>YES</manual_close>
@@ -669,10 +669,10 @@ return 'unknown azure format:'+JSON.stringify(data)
                     </item_prototypes>
                     <trigger_prototypes>
                         <trigger_prototype>
-                            <expression>{Zabbix Agent Webhook Listener:gcp.summary[{#ID}].strlen()}&gt;0 and &#13;
-{Zabbix Agent Webhook Listener:gcp.state[{#ID}].str(closed)}=0</expression>
+                            <expression>{Zabbix Agent Webhook Listener:zwl.gcp.summary[{#ID}].strlen()}&gt;0 and &#13;
+{Zabbix Agent Webhook Listener:zwl.gcp.state[{#ID}].str(closed)}=0</expression>
                             <recovery_mode>RECOVERY_EXPRESSION</recovery_mode>
-                            <recovery_expression>{Zabbix Agent Webhook Listener:gcp.state[{#ID}].str(closed)}=1</recovery_expression>
+                            <recovery_expression>{Zabbix Agent Webhook Listener:zwl.gcp.state[{#ID}].str(closed)}=1</recovery_expression>
                             <name>GCP Alert:{ITEM.VALUE1}</name>
                             <priority>AVERAGE</priority>
                             <manual_close>YES</manual_close>
@@ -737,7 +737,7 @@ return 'unknown azure format:'+JSON.stringify(data)
     </templates>
     <triggers>
         <trigger>
-            <expression>{Zabbix Agent Webhook Listener:webhook.countainer.stats.messages.strlen()}&gt;2 and {Zabbix Agent Webhook Listener:webhook.countainer.stats.errors.last()}&gt;0</expression>
+            <expression>{Zabbix Agent Webhook Listener:zwl.webhook.countainer.stats.messages.strlen()}&gt;2 and {Zabbix Agent Webhook Listener:zwl.webhook.countainer.stats.errors.last()}&gt;0</expression>
             <name>Zabbix webhook container has errors : {ITEM.VALUE}</name>
             <priority>WARNING</priority>
             <manual_close>YES</manual_close>
